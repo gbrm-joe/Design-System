@@ -4,11 +4,12 @@ The shared rulebook for every GBRM manager app. The single source of truth for
 element styling is **`src/design.ts`** in this repo — class-string primitives
 every call site composes, shipped to each app as the **`@gbrm/design`**
 package. `npm run check:design` (the packaged drift guard) fails an app's
-build on hand-rolled control styling. Until this repo grows its own catalogue
-site, Property Manager's `/settings/design` page is the reference rendering of
-every primitive; if a screen doesn't match it, the screen is wrong. History
-and rationale live in Property Manager's DECISIONS.md, where the system was
-first built; each app keeps its own navigation/interaction spec.
+build on hand-rolled control styling. The catalogue (`catalogue/` in this
+repo — `npm run dev`) renders every primitive from the working copy of the
+tokens and is the reference rendering; if a screen doesn't match it, the
+screen is wrong. History and rationale live in Property Manager's
+DECISIONS.md, where the system was first built; each app keeps its own
+navigation/interaction spec.
 
 ## The core rule
 

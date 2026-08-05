@@ -1,0 +1,5 @@
+@import "tailwindcss";
+/* The shared scale (panelgap, desk breakpoint, sidebar width). */
+@import "../../css/theme.css";
+/* Scan the tokens themselves — the class names live in src/design.ts. */
+@source "../../src";
