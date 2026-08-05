@@ -1,6 +1,6 @@
 {
   "name": "@gbrm/design",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "license": "UNLICENSED",
   "description": "Design System — tokens, theme variables, rulebook and drift guard shared across the manager apps.",
@@ -12,7 +12,8 @@
       "types": "./dist/design.d.ts",
       "default": "./dist/design.js"
     },
-    "./theme.css": "./css/theme.css"
+    "./theme.css": "./css/theme.css",
+    "./print.css": "./css/print.css"
   },
   "files": [
     "dist",

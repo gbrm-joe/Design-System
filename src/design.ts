@@ -340,9 +340,114 @@ export const DELTA_POS = "text-xs tabular-nums text-neutral-600";
 /** Negative change figure — red, and the figure carries a minus sign. */
 export const DELTA_NEG = "text-xs tabular-nums text-red-600";
 
+// ── Print — documents and reports ──────────────────────────────────────────
+// The system's SECOND medium: A4 documents generated from app data (reports,
+// schedules, statements). Page geometry lives in css/print.css (@page A4
+// portrait, 15mm margins) — import "@gbrm/design/print.css" from the report's
+// stylesheet.
+//
+// The core rule translated to paper: there is no interaction on paper, so
+// ink-on-white with hairline structure replaces interactive-white-on-grey.
+// RULES:
+// - Fills never exceed neutral-100 — paper is white, toner is dear. Structure
+//   comes from hairlines, not grey bands.
+// - Type is measured in pt. THREE sizes, no exceptions: 9pt data/labels,
+//   12pt section headings, 18pt document title (once, page one).
+// - Colour only where it carries meaning: CHART_SERIES in charts (the palette
+//   is validated on white) and red negatives. Never decorative.
+// - Screen conventions ride along: em dash for zero/absent, DD MMM YYYY,
+//   £1,234 with tabular-nums, negatives red with a REAL minus sign.
+// - Every table/figure block avoids page-break inside (PRINT_AVOID_BREAK);
+//   a table's totals row closes with a heavy rule.
+
+/** The document root: white, dark ink, 9pt body. */
+export const PRINT_PAGE = "bg-white text-[9pt] leading-relaxed text-neutral-900";
+/** Document title — 18pt, once, at the top of page one. */
+export const PRINT_TITLE = "text-[18pt] leading-tight font-semibold text-neutral-900";
+/** The meta line under the title: source app · period · generated date. */
+export const PRINT_META = "text-[9pt] text-neutral-500";
+/** Section heading — 12pt, closed with a hairline rule. */
+export const PRINT_SECTION =
+  "border-b border-neutral-300 pb-1 text-[12pt] font-semibold text-neutral-900";
+/** Uppercase field/column label — 9pt like all data, muted. */
+export const PRINT_LABEL =
+  "text-[9pt] font-medium uppercase tracking-wide text-neutral-500";
+/** A headline-figure box: bordered, NO fill (the toner rule). */
+export const PRINT_TILE = "rounded border border-neutral-300 px-3 py-2";
+/** Data table — full width, collapsed hairlines. */
+export const PRINT_TABLE = "w-full border-collapse text-[9pt]";
+/** Column header cell: uppercase muted label over a mid-weight rule. */
+export const PRINT_TH =
+  "border-b border-neutral-400 px-2 py-1 text-left text-[9pt] font-semibold uppercase tracking-wide text-neutral-500";
+/** Body cell: hairline row dividers only — no vertical rules, no zebra. */
+export const PRINT_TD = "border-b border-neutral-200 px-2 py-1 align-top";
+/** Totals row — closes the table with a heavy rule, bold figures. */
+export const PRINT_ROW_TOTAL = "border-t-2 border-neutral-900 font-semibold";
+/** Running footer: document title left, "Page X of Y" right. */
+export const PRINT_FOOTER =
+  "flex items-center justify-between border-t border-neutral-300 pt-2 text-[9pt] text-neutral-500";
+/** Keep a block (table, chart card, figure band) on one page. */
+export const PRINT_AVOID_BREAK = "break-inside-avoid";
+/** Start a new page (a new top-level section). */
+export const PRINT_PAGE_BREAK = "break-before-page";
+
+// ── Website — the marketing front end ──────────────────────────────────────
+// The system's THIRD medium: the public site for the apps. Same family,
+// different posture — the page is for READING, not editing, so the ground is
+// WHITE and grey bands (neutral-50, WEB_SECTION_ALT) alternate sections: the
+// inverse of the app's grey-chrome/white-card stack. Cards and secondary
+// buttons keep the app's bordered language.
+//
+// ONE deliberate inversion (2026-08-05): the website allows a single
+// dark-fill button — WEB_BTN_CTA — because a marketing page has one job and
+// its lead action must dominate. Dark fills remain BANNED in the apps.
+// RULES:
+// - FOUR text sizes: display (5xl), section title (3xl), body (base),
+//   small (sm). Nothing between.
+// - One CTA style per page view; every other action is WEB_BTN (white,
+//   bordered). Never two dark buttons side by side.
+// - Sections alternate white / neutral-50; a grey band carries border-y
+//   hairlines. No other background colours.
+// - Charts/figures shown on the site follow the app's chart rules verbatim.
+
+/** Page-width container — one measure everywhere. */
+export const WEB_CONTAINER = "mx-auto w-full max-w-5xl px-6";
+/** Site header: white, hairline bottom, sticky. Inner row is h-16. */
+export const WEB_NAV = "sticky top-0 z-40 border-b border-neutral-200 bg-white";
+/** Header/footer text link. */
+export const WEB_NAV_LINK =
+  "text-sm text-neutral-600 transition-colors hover:text-neutral-900";
+/** A page section — one vertical rhythm. */
+export const WEB_SECTION = "py-20";
+/** The alternating grey band section. */
+export const WEB_SECTION_ALT = "border-y border-neutral-200 bg-neutral-50 py-20";
+/** Hero headline — the one 5xl line. */
+export const WEB_DISPLAY = "text-5xl font-semibold tracking-tight text-neutral-900";
+/** Section headline. */
+export const WEB_SECTION_TITLE =
+  "text-3xl font-semibold tracking-tight text-neutral-900";
+/** Small uppercase kicker above a headline. */
+export const WEB_EYEBROW =
+  "text-sm font-semibold uppercase tracking-wide text-neutral-500";
+/** Body copy — muted ink, generous leading. */
+export const WEB_BODY = "text-base leading-relaxed text-neutral-600";
+/** Small print / captions. */
+export const WEB_SMALL = "text-sm text-neutral-500";
+/** THE call to action — the website's one permitted dark fill. */
+export const WEB_BTN_CTA =
+  "inline-flex h-10 items-center gap-2 rounded-md bg-neutral-900 px-5 text-sm font-medium text-white transition-colors hover:bg-neutral-700";
+/** Every other website button: white, bordered — the app's language. */
+export const WEB_BTN =
+  "inline-flex h-10 items-center gap-2 rounded-md border border-neutral-300 bg-white px-5 text-sm font-medium text-neutral-700 transition-colors hover:border-neutral-400";
+/** Feature/pricing card — the app's white card, roomier padding. */
+export const WEB_CARD = "rounded-lg border border-neutral-200 bg-white p-6";
+/** Site footer — dark, mirroring the app's darkest surface. */
+export const WEB_FOOTER = "bg-neutral-900 py-12 text-sm text-neutral-400";
+
 // ── Exemptions (deliberate, not drift) ─────────────────────────────────────
 // - Auth screens (login / forgot / reset password) — outside the app chrome.
-// - The print report (rpt-* classes) — a different medium.
+// - The legacy print report (rpt-* classes) — pre-dates the PRINT_* tokens
+//   above; migrates to them, per app, when each report is next touched.
 // - Devtools overlays (src/devtools).
 // - The Model grid footer tiles — grey like the grid's calculated rows; white
 //   is reserved for input cells there (see property-panel).
