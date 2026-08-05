@@ -106,6 +106,31 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
 - **Model sub-header** — scenario picker + grain toggle + collapse/nav
   controls, all h-7 in the h-9 chrome bar.
 
+## Graphics and dashboards
+
+- **A dashboard is a page like any other.** The standard h-12 title band —
+  never a hero title with a subtitle under it. KPI figures form ONE band of
+  grey `TILE`s (read-only: never white cards, never icons, never per-tile
+  accent colours). Every chart sits inside a `SURFACE_CARD` under a
+  `CARD_HEADER` strip, `GAP` between everything.
+- **Series colours** come from `CHART_SERIES` in FIXED order — the first
+  series is always blue, the second always orange, and a filter that removes
+  a series never repaints the survivors. More than 4 series fold into
+  "Other" or split into small multiples. The order is validated for
+  colour-vision separation and contrast on white; don't re-order it.
+- **One y-axis.** Never a dual-axis chart. Two measures of different scale
+  get two charts.
+- **Chart chrome is recessive**: horizontal gridlines only (`CHART_GRID`
+  hairline), baseline `CHART_AXIS`, all chart text 12 px `CHART_INK`. Text
+  never wears a series colour — the swatch beside it carries identity.
+  Adjacent and stacked fills keep a 2 px white gap.
+- **Legend**: two or more series always get one (`CHART_LEGEND`, under the
+  plot); a single series is named by the card header, no legend.
+- **Deltas** (`+4.2%`) follow the figure rule: positive is plain ink
+  (`DELTA_POS` — green-for-positive is banned), negative is `DELTA_NEG` red
+  with a real minus sign. Never colour alone.
+- One plot height: `CHART_HEIGHT`.
+
 ## Banned
 
 - Close / prev / next buttons in any header (Delete is the only header square).
