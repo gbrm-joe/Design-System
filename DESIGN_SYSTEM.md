@@ -1,6 +1,6 @@
 # Design System
 
-The shared rulebook for every GBRM manager app. The single source of truth for
+The shared rulebook for every manager app. The single source of truth for
 element styling is **`src/design.ts`** in this repo — class-string primitives
 every call site composes, shipped to each app as the **`@gbrm/design`**
 package. `npm run check:design` (the packaged drift guard) fails an app's

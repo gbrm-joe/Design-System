@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
-  "description": "GBRM design system — tokens, theme variables, rulebook and drift guard shared across the manager apps.",
+  "description": "Design System — tokens, theme variables, rulebook and drift guard shared across the manager apps.",
   "type": "module",
   "main": "./dist/design.js",
   "types": "./dist/design.d.ts",

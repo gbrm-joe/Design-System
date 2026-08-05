@@ -98,7 +98,7 @@ export default function App() {
       {/* The one top band: h-12, neutral-200, one centred text-sm line. */}
       <header className={`${SURFACE_HEADER} sticky top-0 z-10 flex ${HEADER_H} items-center justify-between border-b border-neutral-300 px-4`}>
         <div className="flex items-center gap-2 leading-none">
-          <span className="text-sm font-semibold">GBRM Design System</span>
+          <span className="text-sm font-semibold">Design System</span>
           <span className="text-sm text-neutral-500">— catalogue</span>
         </div>
         <span className="text-xs text-neutral-500">renders the working copy of src/design.ts</span>

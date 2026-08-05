@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// design.ts — the single source of truth for element styling across the GBRM
+// design.ts — the single source of truth for element styling across the
 // manager apps, shipped to each as the @gbrm/design package.
 //
 // Every styleable primitive is defined ONCE here as a class-string constant.
