@@ -22,7 +22,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "dev": "npm run dev --prefix catalogue"
   },
   "devDependencies": {
     "typescript": "^5"
