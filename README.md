@@ -53,6 +53,17 @@ chrome = grey. Full rules in `DESIGN_SYSTEM.md`.
    import { BTN, FIELD, SURFACE_CARD } from "@gbrm/design";
    ```
 
+## The catalogue
+
+`catalogue/` is a small standalone site rendering every token from the
+**working copy** of `src/design.ts` — edit a token, refresh, see it. It is the
+reference rendering: if an app screen doesn't match the catalogue, the screen
+is wrong. Review every design change here before tagging a release.
+
+```sh
+cd catalogue && npm install && npm run dev
+```
+
 ## Making a design change
 
 1. Change lands **here**, on a branch, via PR — never as a local edit inside
@@ -71,7 +82,6 @@ chrome = grey. Full rules in `DESIGN_SYSTEM.md`.
 - **Shared components** (EntityTable, FormField, Sheet, panels) stay in each
   app. A component is promoted here only once two apps need the identical
   thing.
-- **The catalogue site** (the live style-guide page rendering every token) —
-  planned as a small app in this repo. Until then, Property Manager's
-  `/settings/design` page is the reference rendering.
+- **The catalogue site** — lives in `catalogue/` (see below), not in the
+  installed package.
 - **Fonts and brand colours** — per-app, in each app's own globals.
