@@ -1,0 +1,22 @@
+/* @gbrm/design — Tailwind v4 theme variables the tokens depend on.
+   Import from the app's global stylesheet, after tailwindcss itself:
+
+     @import "tailwindcss";
+     @import "@gbrm/design/theme.css";
+
+   Fonts and brand colours stay per-app; only the shared scale lives here. */
+
+@theme {
+  /* Desktop floor for the manager shell — tables use `desk:` in place of
+     `lg:` to switch between mobile cards and the desktop table. */
+  --breakpoint-desk: 1113px;
+
+  /* Width panels offset by, to sit flush against the main sidebar.
+     Keep in step with the sidebar width (w-52 = 13rem). */
+  --sidebar-w: 13rem;
+
+  /* PanelGap — THE one gap between UI elements (outer content gutter + gaps
+     between stacked cards/sections/rows/fields).
+     Generates p-panelgap / gap-panelgap / space-y-panelgap etc. */
+  --spacing-panelgap: 0.25rem;
+}

@@ -1,0 +1,143 @@
+# Design System
+
+The shared rulebook for every GBRM manager app. The single source of truth for
+element styling is **`src/design.ts`** in this repo — class-string primitives
+every call site composes, shipped to each app as the **`@gbrm/design`**
+package. `npm run check:design` (the packaged drift guard) fails an app's
+build on hand-rolled control styling. Until this repo grows its own catalogue
+site, Property Manager's `/settings/design` page is the reference rendering of
+every primitive; if a screen doesn't match it, the screen is wrong. History
+and rationale live in Property Manager's DECISIONS.md, where the system was
+first built; each app keeps its own navigation/interaction spec.
+
+## The core rule
+
+**Anything you can click or edit sits on a white background with a border, on
+grey chrome.** Interactive = white. Static chrome = grey. "Chrome" = the app's
+frame — navigation, headers, sub-headers, toolbars — as opposed to content.
+
+## Scale
+
+| Token | Value | Meaning |
+|---|---|---|
+| `GAP` | 4 px (`gap-panelgap`) | The ONE gap — between controls, cards, stacked sections, nav items |
+| `CONTROL_H` | 28 px (`h-7`) | The ONE control height — buttons, fields, chips, selects |
+| `BAR_H` | 36 px (`h-9`) | The ONE bar height — table toolbar, column headers, sub-header |
+| `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
+| `NAV_ITEM` | 13 px text, `py-1` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike; active = a shade darker, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
+| Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
+| Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
+
+## Surfaces — darker up the hierarchy
+
+`SURFACE_NAV` (unit's brand colour, darkest) → `SURFACE_HEADER`
+(`neutral-200`: record/Sheet header bands) → `SURFACE_CHROME` / `SURFACE_PANEL`
+(`neutral-100`: panel side nav, sub-header and body — separated by borders) →
+`SURFACE_BAR` (`neutral-50`: in-table bars) → `SURFACE_CARD` (white — data
+lives here). Headers are never white (not editable). Active side-nav items are
+a shade darker than their nav (`neutral-200`), never white — white is for
+controls, not selection states. **The active rule generalises**: any selected
+state (nav item, segmented option) is a shade darker than its surface.
+**Header borders**: every header band closes with a bottom border (a
+`neutral-200` band gets `border-neutral-300`; a `neutral-100` band gets
+`border-neutral-200`). A header nested inside a record — the Sheet
+`PanelHeader` — is `SURFACE_CHROME` (a step lighter than the record header
+above it), never a second `neutral-200` band.
+
+## Primitives (design.ts)
+
+| Constant | Use |
+|---|---|
+| `BTN` | Standard button — white, bordered |
+| `BTN_PRIMARY` | The lead add/new action — **white** (no dark buttons); first position + Plus icon carry the emphasis |
+| `BTN_ACTIVE` | A toolbar toggle in its ON state — same white, **dark border** marks the state (never a dark fill) |
+| `BTN_DANGER` | Red fill — selection-bar Delete and confirms only |
+| `BTN_ICON` / `BTN_ICON_GHOST` | Square icon buttons (nav arrows / dismiss) |
+| `PANEL_HEADER_BTN` | The ONE header square: Delete. **No close/prev/next buttons anywhere** — the table navigates between records; Escape / backdrop / breadcrumb close |
+| `FIELD` / `FIELD_SEARCH` | Editable inputs and selects — h-7, `text-xs` |
+| `FIELD_ROW` / `_LABEL` / `_VALUE` | The FormField anatomy — grey uppercase label cell + white value cell holding a **transparent** control (`fieldInput` from `ui/field-controls`); the cell IS the field boundary. Always render via the shared `FormField` |
+| `SEGMENTED` (+`_BTN`/`_BTN_ACTIVE`) | The exclusive-option toggle (grain, draw order, radius). Active = a **shade darker** (`neutral-200`) — the nav-active rule; never a dark fill |
+| `CHIP` | Read-only pill on a bar (grey tint) |
+| `TAG` + `TAG_COLOR` | Tiny uppercase status tag; colour carries meaning (8 tones) |
+| `TAG_NUMERIC` | TAG carrying a figure — min-width, centred, tabular |
+| `BADGE` | Rounded-full full-word pill in table cells (tones in `lib/badge-colours`, rendered via `ColourBadge`). Distinct from TAG on purpose |
+| `COUNT_PILL` | Tiny count inside a button (Views 3) |
+| `TILE` | THE one KPI tile — **grey** (read-only; white is for editable/clickable only); `text-xs` label over `text-sm` tabular value. The dashboard's KpiCard composes it |
+| `SURFACE_*` | The ladder above, plus: `SURFACE_CARD_MUTED` (grey frame card holding white rows), `SURFACE_MENU` + `MENU_ITEM` (dropdowns), `SURFACE_EMPTY` (dashed empty state) |
+| `CARD_HEADER` | Grey uppercase title strip across a card top |
+| `SECTION_LABEL` | Uppercase `text-xs` heading inside a card/table; `PANEL_GROUP_LABEL` composes it. `text-[11px]` is retired |
+| `TOOLTIP` | The one dark bubble |
+| `CHECKBOX` | The one checkbox — 14px, one accent (neutral-800) |
+| `PANEL_TITLE` | Detail-panel title text |
+| `BREADCRUMB_PARENT` / `BREADCRUMB_SEP` | The one breadcrumb style: muted clickable parent, ChevronRight separator, dark title |
+
+The shadcn `Button` appears **only in Dialog/Sheet footers** (Save/Cancel/
+destructive confirms). The shadcn `Input` and `Select` are styled to match
+FIELD, so dialog fields look like every other field. `DialogTitle` is
+`text-lg` by default — call sites never set a size.
+
+## Composed patterns
+
+- **Tables** — every list of records renders through `EntityTable`
+  (`components/shared/entity-table.tsx`); never hand-roll a `<table>`. Its
+  toolbar is table chrome: an h-9 bar above the h-9 column header row, one
+  fixed order on every table — **add action first (top-left) → other actions →
+  Views → Columns → filters/toggles → search alone at the right**. The order
+  is enforced by typed slots: `toolbar` takes action BUTTONS only; toggles
+  (e.g. Show sample) go in `filters`, styled as BTN-classed labels — a toggle
+  never sits between action buttons. No opt-outs (search and Views/Columns
+  always present). Multi-select swaps the bar in place to count / extra
+  actions / Delete / clear.
+- **KPI tiles** — a band of equal-width `TILE`s with `GAP`, only where a
+  section has headline figures; a table does NOT imply a band.
+- **Detail panels** — full width less the main nav, baked into `Sheet`; body
+  `SURFACE_PANEL` with white cards; header via `PanelHeader`
+  (`components/panels/panel-header.tsx`); field rows via the shared
+  `FormField` (grey `bg-neutral-50` label cell + white value cell). Never
+  hand-roll a panel header or a local FormField. **A record opened from a
+  table always breadcrumbs back to it** — `Parent › Record` in the panel
+  header, the parent segment clickable (it closes the panel, returning to the
+  table); a bare title with no way back is wrong. **One breadcrumb style
+  everywhere**: muted clickable parent, ChevronRight separator, dark title —
+  never a slash or a back-arrow. Form block: single left
+  column ~w-1/3, one compact block, no sub-headers; right side for
+  charts/KPIs.
+- **Model sub-header** — scenario picker + grain toggle + collapse/nav
+  controls, all h-7 in the h-9 chrome bar.
+
+## Banned
+
+- Close / prev / next buttons in any header (Delete is the only header square).
+- `text-[11px]` (retired 2026-08-04) — data/labels are `text-xs`.
+- Hand-rolled control styling (any button/field class written longhand).
+- Dark-fill buttons anywhere (`bg-neutral-900` fills).
+- shadcn `Button` outside Dialog/Sheet footers.
+- Ad-hoc gaps (`gap-1`/`gap-2`/`gap-3` between controls or cards) and ad-hoc
+  control heights (`h-8` controls).
+- `border-neutral-200` on an interactive control.
+- A fourth text size; `text-sm` in tables/forms/data.
+- Colour without meaning; green for positive figures (data, not celebration);
+  negative = `text-red-600` with a minus sign (`−£1,234`).
+
+## Conventions that ride along
+
+- Zero/absent values display as an em dash, not `0` or `£0`.
+- Currency `£1,234` formatted on blur; dates `DD MMM YYYY`; `tabular-nums`
+  for figures.
+- One `text-lg` heading per panel; hierarchy by weight, not size.
+- Icon-only buttons need `aria-label`; delete asks for confirmation (centred
+  Dialog); Escape closes the top-most layer.
+
+## Exempt (deliberate, not drift)
+
+Auth screens (login/forgot/reset), the print report (`rpt-*`), devtools
+overlays, and the Model grid's grey footer tiles (white is reserved for input
+cells there). Everything else composes design.ts.
+
+## Planned work
+
+Plan 05: the Model grid gets its OWN portable design system (tokens, review
+surface, guard) — covers the grid's dark toast and grid-only styles. Plan 06:
+the comparables table rebuilds onto EntityTable. `shared/editable-cells`
+in-cell editors keep their compact size — a decided exemption (guard excludes
+the file).
