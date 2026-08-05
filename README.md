@@ -1,6 +1,6 @@
-# GBRM Design System
+# Design System
 
-The shared design system for the GBRM manager apps (Property, Survey, Project,
+The shared design system for our manager apps (Property, Survey, Project,
 People, OKR, Data, Development). One set of tokens, one rulebook, one drift
 guard — installed into each app as a versioned package.
 

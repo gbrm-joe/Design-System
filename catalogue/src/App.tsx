@@ -48,6 +48,14 @@ import {
   BREADCRUMB_PARENT,
   BREADCRUMB_SEP,
   TILE,
+  CHART_SERIES,
+  CHART_GRID,
+  CHART_AXIS,
+  CHART_INK,
+  CHART_LEGEND,
+  CHART_LEGEND_SWATCH,
+  DELTA_POS,
+  DELTA_NEG,
 } from "../../src/design";
 
 // Tiny inline icons — the apps use lucide; the catalogue stays dependency-free.
@@ -98,7 +106,7 @@ export default function App() {
       {/* The one top band: h-12, neutral-200, one centred text-sm line. */}
       <header className={`${SURFACE_HEADER} sticky top-0 z-10 flex ${HEADER_H} items-center justify-between border-b border-neutral-300 px-4`}>
         <div className="flex items-center gap-2 leading-none">
-          <span className="text-sm font-semibold">GBRM Design System</span>
+          <span className="text-sm font-semibold">Design System</span>
           <span className="text-sm text-neutral-500">— catalogue</span>
         </div>
         <span className="text-xs text-neutral-500">renders the working copy of src/design.ts</span>
@@ -303,6 +311,92 @@ export default function App() {
           </Spec>
           <Spec name="SECTION_LABEL">
             <div className={SECTION_LABEL}>Planning and development</div>
+          </Spec>
+        </Section>
+
+        <Section
+          title="Graphics and dashboards"
+          note="A dashboard is a page like any other: h-12 band, KPI figures as ONE band of grey TILEs (no icons, no accent colours), every chart in a card under a CARD_HEADER. Series colours in FIXED order — the first series is always blue; a filter never repaints survivors. One y-axis, ever. Chart text never wears a series colour."
+        >
+          <Spec name="CHART_SERIES (fixed order, validated for colour-vision + contrast)">
+            <div className="flex gap-1.5">
+              {CHART_SERIES.map((hex, i) => (
+                <div key={hex} className="flex flex-col items-center gap-1">
+                  <div className="h-7 w-10 rounded" style={{ background: hex }} />
+                  <div className="font-mono text-[10px] text-neutral-400">{i + 1}</div>
+                </div>
+              ))}
+            </div>
+          </Spec>
+          <Spec name="Chart idiom — grid CHART_GRID, baseline CHART_AXIS, ink CHART_INK, 2px gaps, legend below">
+            <div className={`${SURFACE_CARD} w-96 overflow-hidden`}>
+              <div className={CARD_HEADER}>Passing rent vs ERV by portfolio</div>
+              <div className="p-3">
+                <svg viewBox="0 0 340 172" className="w-full">
+                  {[0, 10, 20, 30].map((v) => (
+                    <g key={v}>
+                      <line x1="34" x2="334" y1={150 - (v / 32) * 135} y2={150 - (v / 32) * 135} stroke={v === 0 ? CHART_AXIS : CHART_GRID} strokeWidth="1" />
+                      <text x="30" y={153 - (v / 32) * 135} textAnchor="end" fontSize="10" fill={CHART_INK}>£{v}m</text>
+                    </g>
+                  ))}
+                  {[
+                    { label: "City Centre", a: 28.5, b: 31.0 },
+                    { label: "Retail Park", a: 16.2, b: 17.5 },
+                    { label: "Mixed-Use", a: 6.9, b: 8.1 },
+                    { label: "Industrial", a: 12.0, b: 12.6 },
+                  ].map((g, i) => {
+                    const x0 = 34 + i * 75 + 14;
+                    const h = (v: number) => (v / 32) * 135;
+                    return (
+                      <g key={g.label}>
+                        <rect x={x0} y={150 - h(g.a)} width="21" height={h(g.a)} rx="2" fill={CHART_SERIES[0]} />
+                        <rect x={x0 + 23} y={150 - h(g.b)} width="21" height={h(g.b)} rx="2" fill={CHART_SERIES[1]} />
+                        <text x={x0 + 22} y="164" textAnchor="middle" fontSize="10" fill={CHART_INK}>{g.label}</text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                <div className={`${CHART_LEGEND} mt-2`}>
+                  <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[0] }} />Passing rent</span>
+                  <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[1] }} />ERV</span>
+                </div>
+              </div>
+            </div>
+          </Spec>
+          <Spec name="DELTA_POS / DELTA_NEG (no green; red carries a real minus)">
+            <div className="flex items-center gap-4 rounded border border-neutral-200 bg-white px-3 py-2">
+              <span className="text-xs text-neutral-500">Passing rent</span>
+              <span className={DELTA_POS}>+4.2%</span>
+              <span className="text-xs text-neutral-500">Capital value</span>
+              <span className={DELTA_NEG}>−1.8%</span>
+            </div>
+          </Spec>
+          <Spec name="Dashboard anatomy — h-12 band, TILE band, chart cards; GAP throughout">
+            <div className="w-96 overflow-hidden rounded-lg border border-neutral-300">
+              <div className="flex h-9 items-center border-b border-neutral-300 bg-neutral-200 px-2 text-xs font-semibold">Dashboard</div>
+              <div className="flex flex-col gap-panelgap bg-neutral-100 p-panelgap">
+                <div className="flex gap-panelgap">
+                  {[
+                    ["Passing rent", "£3.20m"],
+                    ["Net Initial Yield", "6.2%"],
+                    ["WAULT", "5.4 yrs"],
+                  ].map(([label, value]) => (
+                    <div key={label} className={`${TILE} flex-1 !px-2 !py-1.5`}>
+                      <div className="text-xs text-neutral-500">{label}</div>
+                      <div className="text-sm font-semibold tabular-nums">{value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-panelgap">
+                  {["Running yield profile", "Lease expiries"].map((title) => (
+                    <div key={title} className={`${SURFACE_CARD} flex-1 overflow-hidden`}>
+                      <div className={`${CARD_HEADER} !px-2 !py-1`}>{title}</div>
+                      <div className="m-2 h-12 rounded bg-neutral-50" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Spec>
         </Section>
       </main>

@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// design.ts — the single source of truth for element styling across the GBRM
+// design.ts — the single source of truth for element styling across the
 // manager apps, shipped to each as the @gbrm/design package.
 //
 // Every styleable primitive is defined ONCE here as a class-string constant.
@@ -286,6 +286,59 @@ export const PANEL_GROUP_LABEL = `mb-panelgap pl-px ${SECTION_LABEL}`;
  *  is for editable/clickable surfaces only. This is THE one KPI tile; the
  *  dashboard's card-based tile and any local variants compose it. */
 export const TILE = "rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2";
+
+// ── Charts and dashboards ──────────────────────────────────────────────────
+// A dashboard is a page like any other: the standard h-12 title band (no hero
+// titles), KPI figures as ONE band of grey TILEs, and every chart inside a
+// SURFACE_CARD under a CARD_HEADER strip. Charts render as SVG, so series and
+// chrome colours are hex, not classes.
+//
+// RULES (DESIGN_SYSTEM.md → Graphics and dashboards):
+// - Series take CHART_SERIES colours in FIXED order — never cycled, never
+//   re-assigned when a filter changes the series count. More than 4 series
+//   fold into "Other" or split into small multiples.
+// - ONE y-axis. Never a dual-axis chart — two measures of different scale get
+//   two charts side by side.
+// - Horizontal gridlines only (CHART_GRID); baseline CHART_AXIS; all chart
+//   text 12px CHART_INK. Adjacent and stacked fills keep a 2px white gap —
+//   it is also the palette's colour-vision relief.
+// - Two or more series always get a legend (CHART_LEGEND); a single series is
+//   named by the card header — no legend.
+// - Deltas follow the figure rule: DELTA_POS is plain ink (green-for-positive
+//   is banned), DELTA_NEG is red WITH a minus sign — never colour alone.
+
+/** Categorical series colours, FIXED order (validated 2026-08-05 for
+ *  colour-vision separation and ≥3:1 contrast on the white card; slots 1–3
+ *  also validate all-pairs for scatter forms). Family: blue-600, orange-600,
+ *  emerald-600, amber-600, violet-700, green-700. */
+export const CHART_SERIES = [
+  "#2563eb",
+  "#ea580c",
+  "#059669",
+  "#d97706",
+  "#6d28d9",
+  "#15803d",
+] as const;
+
+/** Horizontal gridlines — hairline, neutral-200. */
+export const CHART_GRID = "#e5e5e5";
+/** Baseline/axis line — neutral-300. */
+export const CHART_AXIS = "#d4d4d4";
+/** Axis ticks and in-chart labels — neutral-500 ink, 12px like all data. */
+export const CHART_INK = "#737373";
+/** The ONE plot height inside a chart card. */
+export const CHART_HEIGHT = "h-64";
+
+/** Legend row under the plot: swatch + name per series, text-xs muted. */
+export const CHART_LEGEND =
+  "flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-500";
+/** Legend swatch — 8px square, background from CHART_SERIES. */
+export const CHART_LEGEND_SWATCH = "h-2 w-2 shrink-0 rounded-[2px]";
+
+/** Positive change figure — plain ink. No green celebration. */
+export const DELTA_POS = "text-xs tabular-nums text-neutral-600";
+/** Negative change figure — red, and the figure carries a minus sign. */
+export const DELTA_NEG = "text-xs tabular-nums text-red-600";
 
 // ── Exemptions (deliberate, not drift) ─────────────────────────────────────
 // - Auth screens (login / forgot / reset password) — outside the app chrome.
