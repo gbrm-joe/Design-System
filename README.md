@@ -22,6 +22,7 @@ Full rules in `DESIGN_SYSTEM.md`.
 | Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
 | Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, layout (L1–L8), conventions (C1–C8), when each primitive applies. |
 | Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens, or when a layout or convention rule it can see is broken. |
+| Upgrade skill | `skills/design-update/` | The `/design-update` Claude Code skill — bumps an app's pinned tag, diffs the rulebook, fixes every guard failure and applies the rest by hand. Versioned with the rules it enforces; installed into an app by `scripts/install-skills.sh`. |
 
 ## Installing into an app
 
@@ -53,7 +54,21 @@ Full rules in `DESIGN_SYSTEM.md`.
    Run it in CI / before commit. An app can exempt specific files by listing
    grep patterns, one per line, in a `.design-check-ignore` at its root.
 
-4. **Import tokens, delete local copies:**
+4. **Wire the upgrade skill** — in the app's `package.json` scripts, then run
+   it once:
+
+   ```json
+   "install:skills": "sh node_modules/@gbrm/design/scripts/install-skills.sh"
+   ```
+
+   Claude Code only discovers skills at the app root, never inside
+   `node_modules`, so this copies the packaged skills into the app's
+   `.claude/skills/`. The copy is package-owned and overwritten on every run —
+   never edit it in the app. From then on the app upgrades with
+   `/design-update`, which re-runs this install itself so the skill stays in
+   step with the rules.
+
+5. **Import tokens, delete local copies:**
 
    ```ts
    import { BTN, FIELD, SURFACE_CARD } from "@gbrm/design";
@@ -97,7 +112,8 @@ cd catalogue && npm install && npm run dev
    ```
 
 3. Each app upgrades on its own schedule by bumping its pinned tag and
-   reviewing the diff. Nothing changes silently across live apps.
+   reviewing the diff — run `/design-update` in the app to do that properly.
+   Nothing changes silently across live apps.
 
 ## Components — and why they are here now
 

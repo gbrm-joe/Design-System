@@ -389,6 +389,24 @@ it migrates to the `PRINT_*` tokens), devtools
 overlays, and the Model grid's grey footer tiles (white is reserved for input
 cells there). Everything else composes design.ts.
 
+## Adopting a new version
+
+An app adopts a release by bumping its pinned tag and bringing its code up to
+whatever the new version says — never by editing the package or patching a
+token locally. That job is scripted: the package ships the **`/design-update`**
+skill (`skills/design-update/SKILL.md`), which bumps the pin, diffs this
+rulebook old against new, fixes every drift-guard failure, applies the rule
+changes the guard cannot see, verifies and commits.
+
+Claude Code only finds skills at the app root, so an app installs it once:
+
+    "install:skills": "sh node_modules/@gbrm/design/scripts/install-skills.sh"
+
+That copies the packaged skills into the app's `.claude/skills/`. The copy is
+package-owned — it is overwritten on every run, and `/design-update` re-runs
+the install straight after the version bump so the skill updates itself along
+with the rules it enforces.
+
 ## Planned work
 
 Plan 05: the Model grid gets its OWN portable design system (tokens, review
