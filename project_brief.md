@@ -33,6 +33,9 @@ background with a border, on grey chrome. Interactive = white. Static chrome
 - Website standards — `WEB_*` tokens for the marketing front end
 - The rulebook (`DESIGN_SYSTEM.md`) and the drift guard
   (`scripts/check-design.sh`)
+- The `/design-update` skill (`skills/design-update/`) — how an app adopts a
+  new version; shipped here so it is versioned with the rules it enforces,
+  and installed into an app by `scripts/install-skills.sh` (v0.7.0)
 
 **Deliberately out:**
 
@@ -54,7 +57,8 @@ background with a border, on grey chrome. Interactive = white. Static chrome
 
 Change lands here on a branch → reviewed in the catalogue → merged → version
 bumped and tagged → each app upgrades by bumping its pin, deliberately, on
-its own schedule. Nothing changes silently across live apps.
+its own schedule, by running the packaged `/design-update` skill. Nothing
+changes silently across live apps.
 
 ## History
 
@@ -69,4 +73,9 @@ and layout was promoted from prose to numbered rules L1–L7 — L1 (fields in O
 left column) now fails the drift guard. Conventions became C1–C8 with a page of
 their own, opening with the decision that NOTHING is ever right-aligned (Joe,
 2026-08-06): `EntityTable`'s `align` option was removed and `text-right` is now
-guarded.
+guarded. v0.6.0: `MainNav` ships from the package and L8 governs both navs.
+v0.7.0: packaging only — the `/design-update` skill moved out of Joe's personal
+Claude config and into the package, so the instructions for adopting a version
+are versioned with the rules they enforce; `scripts/install-skills.sh` copies it
+into a consuming app, and the skill re-runs that install after every bump so it
+updates itself.
