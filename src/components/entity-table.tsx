@@ -50,7 +50,6 @@ import { BTN, BTN_ACTIVE, BTN_PRIMARY, BTN_DANGER, BTN_ICON_GHOST, FIELD, FIELD_
 export interface ColumnDef<T> {
   key: string;
   label: string;
-  align: "left" | "right";
   /** Default relative width — normalised to a percentage of the table. */
   width: number;
   /** May be used as a grouping key. */
@@ -106,7 +105,6 @@ interface View {
 
 export function ColumnHeaderMenu({
   label,
-  align,
   sortActive,
   sortDir,
   onSort,
@@ -117,7 +115,6 @@ export function ColumnHeaderMenu({
   onToggleGroup,
 }: {
   label: string;
-  align: "left" | "right";
   sortActive: boolean;
   sortDir: "asc" | "desc";
   onSort: (dir: "asc" | "desc") => void;
@@ -163,9 +160,7 @@ export function ColumnHeaderMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`-mx-1 inline-flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-xs font-semibold uppercase tracking-wide text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900 ${
-          align === "right" ? "flex-row-reverse" : ""
-        }`}
+        className="-mx-1 inline-flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-xs font-semibold uppercase tracking-wide text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900"
       >
         <span>{label}</span>
         {sortActive &&
@@ -181,9 +176,7 @@ export function ColumnHeaderMenu({
 
       {open && (
         <div
-          className={`${SURFACE_MENU} absolute top-full mt-1 w-56 text-neutral-700 ${
-            align === "right" ? "right-0" : "left-0"
-          }`}
+          className={`${SURFACE_MENU} absolute top-full left-0 mt-1 w-56 text-neutral-700`}
         >
           <button
             type="button"
@@ -1038,9 +1031,7 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
         {visibleColDefs.map((c) => (
           <td
             key={c.key}
-            className={`truncate px-3 py-1.5 ${
-              c.align === "right" ? "text-right" : "text-left"
-            } ${c.cellClass?.(r) ?? ""}`}
+            className={`truncate px-3 py-1.5 text-left ${c.cellClass?.(r) ?? ""}`}
           >
             {c.render(r)}
           </td>
@@ -1101,7 +1092,7 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
         c.aggregate ? (
           <td
             key={c.key}
-            className={`truncate px-3 py-1.5 text-right ${cellClassName}`}
+            className={`truncate px-3 py-1.5 text-left ${cellClassName}`}
           >
             {c.renderTotal
               ? c.renderTotal(rowTotals[c.key] ?? 0)
@@ -1280,21 +1271,14 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
                     setDragCol(null);
                     setDragOverCol(null);
                   }}
-                  className={`relative h-9 cursor-grab px-3 ${
-                    c.align === "right" ? "text-right" : "text-left"
-                  } ${dragCol === c.key ? "opacity-40" : ""}`}
+                  className={`relative h-9 cursor-grab px-3 text-left ${dragCol === c.key ? "opacity-40" : ""}`}
                 >
                   {dragOverCol === c.key && (
                     <div className="pointer-events-none absolute left-0 top-0 z-20 h-full w-0.5 bg-neutral-900" />
                   )}
-                  <div
-                    className={`flex items-center ${
-                      c.align === "right" ? "justify-end" : ""
-                    }`}
-                  >
+                  <div className="flex items-center">
                     <ColumnHeaderMenu
                       label={c.label}
-                      align={c.align}
                       sortActive={sortCol === c.key}
                       sortDir={sortDir}
                       onSort={(dir) => applySort(c.key, dir)}

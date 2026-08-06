@@ -84,7 +84,7 @@ function PanelNavRow({
       )}
     >
       <span className="truncate">{item.label}</span>
-      <span className="ml-2 shrink-0 text-right text-xs tabular-nums">
+      <span className="ml-2 shrink-0 text-xs tabular-nums">
         {item.soon ? (
           // TAG_COLOR.neutral would vanish on the neutral-100 nav — one shade darker.
           <span className={`${TAG} bg-neutral-200 text-neutral-400`}>Soon</span>

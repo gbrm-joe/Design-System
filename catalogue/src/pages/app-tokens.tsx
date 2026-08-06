@@ -1,6 +1,6 @@
-// The Application system — every token the manager apps compose. Moved here
-// unchanged when the catalogue gained its sidebar (Print and Website pages
-// sit alongside).
+// The Application system → Tokens. Every token the manager apps compose.
+// Its siblings under Application: Components (the v0.4.0 shared components)
+// and Layout (where the blocks sit).
 import {
   GAP,
   CONTROL_H,
@@ -47,15 +47,10 @@ import {
   BREADCRUMB_SEP,
   TILE,
   CHART_SERIES,
-  CHART_GRID,
-  CHART_AXIS,
-  CHART_INK,
-  CHART_LEGEND,
-  CHART_LEGEND_SWATCH,
   DELTA_POS,
   DELTA_NEG,
 } from "../../../src/design";
-import { Spec, Section, CoreRule, Plus, Search, ChevronDown, ChevronRight, Trash, X } from "../ui";
+import { Spec, Section, GroupedBarChart, CoreRule, Plus, Search, ChevronDown, ChevronRight, Trash, X } from "../ui";
 
 export default function AppSystem() {
   return (
@@ -279,34 +274,18 @@ export default function AppSystem() {
           <div className={`${SURFACE_CARD} w-96 overflow-hidden`}>
             <div className={CARD_HEADER}>Passing rent vs ERV by portfolio</div>
             <div className="p-3">
-              <svg viewBox="0 0 340 172" className="w-full">
-                {[0, 10, 20, 30].map((v) => (
-                  <g key={v}>
-                    <line x1="34" x2="334" y1={150 - (v / 32) * 135} y2={150 - (v / 32) * 135} stroke={v === 0 ? CHART_AXIS : CHART_GRID} strokeWidth="1" />
-                    <text x="30" y={153 - (v / 32) * 135} textAnchor="end" fontSize="10" fill={CHART_INK}>£{v}m</text>
-                  </g>
-                ))}
-                {[
+              <GroupedBarChart
+                max={32}
+                ticks={[0, 10, 20, 30]}
+                fmt={(v) => `£${v}m`}
+                series={["Passing rent", "ERV"]}
+                data={[
                   { label: "City Centre", a: 28.5, b: 31.0 },
                   { label: "Retail Park", a: 16.2, b: 17.5 },
                   { label: "Mixed-Use", a: 6.9, b: 8.1 },
                   { label: "Industrial", a: 12.0, b: 12.6 },
-                ].map((g, i) => {
-                  const x0 = 34 + i * 75 + 14;
-                  const h = (v: number) => (v / 32) * 135;
-                  return (
-                    <g key={g.label}>
-                      <rect x={x0} y={150 - h(g.a)} width="21" height={h(g.a)} rx="2" fill={CHART_SERIES[0]} />
-                      <rect x={x0 + 23} y={150 - h(g.b)} width="21" height={h(g.b)} rx="2" fill={CHART_SERIES[1]} />
-                      <text x={x0 + 22} y="164" textAnchor="middle" fontSize="10" fill={CHART_INK}>{g.label}</text>
-                    </g>
-                  );
-                })}
-              </svg>
-              <div className={`${CHART_LEGEND} mt-2`}>
-                <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[0] }} />Passing rent</span>
-                <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[1] }} />ERV</span>
-              </div>
+                ]}
+              />
             </div>
           </div>
         </Spec>

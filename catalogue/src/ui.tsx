@@ -1,6 +1,17 @@
-// Shared catalogue chrome: the specimen wrapper, the section card and the
-// inline icon set. The apps use lucide; the catalogue stays dependency-free.
-import { SURFACE_CARD, CARD_HEADER } from "../../src/design";
+// Shared catalogue chrome: the specimen wrapper, the section card, the one
+// chart and the inline icon set. The apps use lucide and a chart library; the
+// catalogue stays dependency-free.
+import { useLayoutEffect, useRef, useState } from "react";
+import {
+  SURFACE_CARD,
+  CARD_HEADER,
+  CHART_SERIES,
+  CHART_GRID,
+  CHART_AXIS,
+  CHART_INK,
+  CHART_LEGEND,
+  CHART_LEGEND_SWATCH,
+} from "../../src/design";
 
 export const icon = "h-3.5 w-3.5";
 
@@ -34,6 +45,21 @@ export const PrinterIcon = ({ className }: { className?: string }) => (
 export const GlobeIcon = ({ className }: { className?: string }) => (
   <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></svg>
 );
+export const ChevronUp = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m6 15 6-6 6 6" /></svg>
+);
+export const Info = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+);
+export const Layers = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5M3 13l9 5 9-5" /></svg>
+);
+export const PanelLeftClose = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18m7-11-3 2 3 2" /></svg>
+);
+export const PanelLeftOpen = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18m4-11 3 2-3 2" /></svg>
+);
 
 /** One specimen: the rendered element with its token name underneath. */
 export function Spec({ name, children }: { name: string; children: React.ReactNode }) {
@@ -45,14 +71,121 @@ export function Spec({ name, children }: { name: string; children: React.ReactNo
   );
 }
 
-/** One catalogue section: white card, grey uppercase header strip. */
-export function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+/** One catalogue section: white card, grey uppercase header strip.
+ *  `stack` swaps the wrapping specimen row for a full-width column — used by
+ *  the Components and Layout pages, whose specimens are whole screens. */
+export function Section({ title, note, stack, children }: { title: string; note?: string; stack?: boolean; children: React.ReactNode }) {
   return (
     <section className={`${SURFACE_CARD} overflow-hidden`}>
       <div className={CARD_HEADER}>{title}</div>
       {note && <div className="border-b border-neutral-100 px-3 py-2 text-xs text-neutral-500">{note}</div>}
-      <div className="flex flex-wrap items-end gap-x-6 gap-y-4 p-4">{children}</div>
+      <div className={stack ? "flex flex-col gap-5 p-4" : "flex flex-wrap items-end gap-x-6 gap-y-4 p-4"}>{children}</div>
     </section>
+  );
+}
+
+/** A full-width specimen: title, the rule in one line, then the rendering. */
+export function Anatomy({ name, rule, children }: { name: string; rule?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="font-mono text-[10px] text-neutral-400">{name}</div>
+      {rule && <div className="text-xs text-neutral-600">{rule}</div>}
+      {children}
+    </div>
+  );
+}
+
+/** Correct / wrong marker above a specimen. Green is banned for figures, not
+ *  for a verdict — this is a label, not data. */
+export function Verdict({ ok, children }: { ok: boolean; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs font-medium">
+      <span className={ok ? "text-emerald-700" : "text-red-600"}>{ok ? "✓ Correct" : "✗ Wrong"}</span>
+      <span className="text-neutral-500">— {children}</span>
+    </div>
+  );
+}
+
+/**
+ * THE catalogue chart — a grouped bar chart drawn 1:1.
+ *
+ * The chart rules are in real pixels: text is 12px, gridlines are hairlines,
+ * adjacent fills keep a 2px white gap. A `viewBox` stretched to fill its card
+ * scales all three — the axis labels were rendering at 14 and 18px — so the
+ * SVG is measured and drawn at its true width instead. Nothing here is a
+ * chart library; it is the rules, rendered.
+ */
+export function GroupedBarChart({
+  data,
+  ticks,
+  max,
+  fmt,
+  series,
+  height = 172,
+}: {
+  data: Array<{ label: string; a: number; b: number }>;
+  ticks: number[];
+  max: number;
+  fmt: (v: number) => string;
+  series: [string, string];
+  height?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.round(e.contentRect.width)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Geometry in real pixels. 46px gutter holds the widest y label at 12px.
+  const left = 46;
+  const top = 8;
+  const bottom = height - 22; // the x-label line sits under the baseline
+  const plotW = Math.max(0, w - left - 4);
+  const groupW = plotW / Math.max(1, data.length);
+  const barW = Math.max(6, Math.min(24, (groupW - 14) / 2));
+  const y = (v: number) => bottom - (v / max) * (bottom - top);
+
+  return (
+    <div ref={ref} className="w-full">
+      {w > 0 && (
+        <svg width={w} height={height} className="block">
+          {/* Horizontal gridlines only; the baseline is a shade darker. */}
+          {ticks.map((v) => (
+            <g key={v}>
+              <line x1={left} x2={w - 4} y1={y(v)} y2={y(v)} stroke={v === 0 ? CHART_AXIS : CHART_GRID} strokeWidth="1" />
+              <text x={left - 8} y={y(v) + 4} textAnchor="end" fontSize="12" fill={CHART_INK}>{fmt(v)}</text>
+            </g>
+          ))}
+          {data.map((g, i) => {
+            // The pair is centred in its group with a 2px white gap between.
+            const cx = left + groupW * i + groupW / 2;
+            const x0 = cx - barW - 1;
+            return (
+              <g key={g.label}>
+                <rect x={x0} y={y(g.a)} width={barW} height={bottom - y(g.a)} rx="2" fill={CHART_SERIES[0]} />
+                <rect x={x0 + barW + 2} y={y(g.b)} width={barW} height={bottom - y(g.b)} rx="2" fill={CHART_SERIES[1]} />
+                <text x={cx} y={height - 6} textAnchor="middle" fontSize="12" fill={CHART_INK}>{g.label}</text>
+              </g>
+            );
+          })}
+        </svg>
+      )}
+      {/* Two or more series always get a legend; the swatch carries identity,
+          never the text colour. */}
+      <div className={`${CHART_LEGEND} mt-2`}>
+        {series.map((name, i) => (
+          <span key={name} className="flex items-center gap-1.5">
+            <span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[i] }} />
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 

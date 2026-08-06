@@ -69,7 +69,7 @@ export default function PrintSystem() {
                   <th className={PRINT_TH}>Property</th>
                   <th className={PRINT_TH}>Use</th>
                   <th className={PRINT_TH}>Next review</th>
-                  <th className={`${PRINT_TH} text-right`}>Rent pa</th>
+                  <th className={PRINT_TH}>Rent pa</th>
                 </tr>
               </thead>
               <tbody>
@@ -78,12 +78,12 @@ export default function PrintSystem() {
                     <td className={PRINT_TD}>{name}</td>
                     <td className={PRINT_TD}>{use}</td>
                     <td className={PRINT_TD}>{review}</td>
-                    <td className={`${PRINT_TD} text-right tabular-nums`}>{rent}</td>
+                    <td className={`${PRINT_TD} tabular-nums`}>{rent}</td>
                   </tr>
                 ))}
                 <tr className={PRINT_ROW_TOTAL}>
                   <td className="px-2 py-1" colSpan={3}>Total</td>
-                  <td className="px-2 py-1 text-right tabular-nums">£2,633,250</td>
+                  <td className="px-2 py-1 tabular-nums">£2,633,250</td>
                 </tr>
               </tbody>
             </table>
@@ -138,19 +138,19 @@ export default function PrintSystem() {
               <thead>
                 <tr>
                   <th className={PRINT_TH}>Property</th>
-                  <th className={`${PRINT_TH} text-right`}>Rent pa</th>
+                  <th className={PRINT_TH}>Rent pa</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map(([name, , , rent]) => (
                   <tr key={name}>
                     <td className={PRINT_TD}>{name}</td>
-                    <td className={`${PRINT_TD} text-right tabular-nums`}>{rent}</td>
+                    <td className={`${PRINT_TD} tabular-nums`}>{rent}</td>
                   </tr>
                 ))}
                 <tr className={PRINT_ROW_TOTAL}>
                   <td className="px-2 py-1">Total</td>
-                  <td className="px-2 py-1 text-right tabular-nums">£2,633,250</td>
+                  <td className="px-2 py-1 tabular-nums">£2,633,250</td>
                 </tr>
               </tbody>
             </table>
