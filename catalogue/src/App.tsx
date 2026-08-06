@@ -3,8 +3,9 @@
 // released. The page itself follows the system: grey chrome, white cards,
 // h-12 header band, and a side nav (NAV_ITEM on SURFACE_CHROME, collapse
 // pinned bottom) switching between the three media: Application, Print,
-// Website. Application carries a sub-nav — Tokens, Components, Layout —
-// indented one level, the same nesting PanelNav uses inside a record.
+// Website. Application carries a sub-nav —
+// indented one level, the same nesting PanelNav uses inside a record:
+// Tokens, Components, Layout, Conventions.
 // If an app screen doesn't match this page, the screen is wrong.
 import { useState } from "react";
 import {
@@ -20,6 +21,7 @@ import { LayoutIcon, PrinterIcon, GlobeIcon, ChevronLeft, ChevronRight } from ".
 import AppTokens from "./pages/app-tokens";
 import AppComponents from "./pages/app-components";
 import AppLayout from "./pages/app-layout";
+import AppConventions from "./pages/app-conventions";
 import PrintSystem from "./pages/print-system";
 import WebsiteSystem from "./pages/website-system";
 
@@ -30,6 +32,7 @@ const PAGES = [
   { key: "app/tokens", parent: "app", label: "Tokens", Page: AppTokens },
   { key: "app/components", parent: "app", label: "Components", Page: AppComponents },
   { key: "app/layout", parent: "app", label: "Layout", Page: AppLayout },
+  { key: "app/conventions", parent: "app", label: "Conventions", Page: AppConventions },
   { key: "print", label: "Print", Icon: PrinterIcon, Page: PrintSystem },
   { key: "website", label: "Website", Icon: GlobeIcon, Page: WebsiteSystem },
 ] as const;

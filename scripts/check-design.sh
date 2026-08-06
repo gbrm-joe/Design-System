@@ -71,6 +71,10 @@ check "transparent field input re-declared — import fieldInput from ui/field-c
 check_pair "L1 — FormFields in a multi-column grid: fields are ONE column, on the left (~w-1/3); charts/KPIs go right" \
   "<FormField" "grid-cols-[2-9]"
 
+# C1 — everything is left-aligned (Joe, 2026-08-06). Figures keep tabular-nums;
+# the alignment goes. Covers responsive variants (md:text-right) too.
+check "C1 — text-right: nothing is ever right-aligned, in a table, a form, a tile or a report" "text-right"
+
 # The package ships these; a local re-declaration is drift by definition
 # (DESIGN_SYSTEM.md → Banned). Catches the record that grows its own tab
 # strip or panel chrome instead of importing PanelLayout.

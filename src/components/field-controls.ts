@@ -17,7 +17,9 @@ export const fieldSelect =
 export const fieldTextarea =
   "w-full resize-none bg-transparent text-xs text-neutral-900 placeholder:text-neutral-300 outline-none";
 
-/** Transparent input for a FIGURE — right-aligned and tabular, per the rule
- *  that all figures are right-aligned tabular-nums. */
+/** Transparent input for a FIGURE — tabular, LEFT-aligned like every other
+ *  value. DECIDED (Joe, 2026-08-06): nothing is ever right-aligned, in a form
+ *  or a table (DESIGN_SYSTEM.md → Conventions, C1). `tabular-nums` is what
+ *  keeps a column of figures legible; the alignment never was. */
 export const fieldInputNumeric =
-  "w-full bg-transparent text-right text-xs tabular-nums text-neutral-900 outline-none";
+  "w-full bg-transparent text-xs tabular-nums text-neutral-900 outline-none";

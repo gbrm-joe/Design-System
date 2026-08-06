@@ -23,6 +23,7 @@ background with a border, on grey chrome. Interactive = white. Static chrome
   enforce
 - Layout rules L1–L7 — where the blocks sit; numbered, drawn in the catalogue
   and partly guarded (v0.5.0)
+- Conventions C1–C8 — how a value is written in any medium (v0.5.0)
 - Theme scale variables — panelgap, desk breakpoint, sidebar width
   (`css/theme.css`)
 - Graphics and dashboard standards — validated chart palette, chart chrome,
@@ -65,4 +66,7 @@ broadened to three media — Print (`PRINT_*` tokens, `print.css`) and Website
 moved into the package. v0.5.0: the catalogue gained its Application sub-nav
 (Tokens · Components · Layout) so the components have a reference rendering,
 and layout was promoted from prose to numbered rules L1–L7 — L1 (fields in ONE
-left column) now fails the drift guard.
+left column) now fails the drift guard. Conventions became C1–C8 with a page of
+their own, opening with the decision that NOTHING is ever right-aligned (Joe,
+2026-08-06): `EntityTable`'s `align` option was removed and `text-right` is now
+guarded.

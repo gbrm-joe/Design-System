@@ -85,7 +85,7 @@ function NavRow({ label, active, soon, badge, indent }: { label: string; active?
       }`}
     >
       <span className="truncate">{label}</span>
-      <span className="ml-2 shrink-0 text-right text-xs tabular-nums">
+      <span className="ml-2 shrink-0 text-xs tabular-nums">
         {soon ? (
           <span className={`${TAG} bg-neutral-200 text-neutral-400`}>Soon</span>
         ) : badge !== undefined ? (
@@ -158,7 +158,7 @@ function FormBlock({ labelWidth = "w-40" }: { labelWidth?: string }) {
         <input className={fieldInput} defaultValue="Freehold" />
       </FormFieldSpecimen>
       <FormFieldSpecimen label="Passing rent" labelWidth={labelWidth}>
-        <input className={`${fieldInput} text-right tabular-nums`} defaultValue="£1,234,000" />
+        <input className={`${fieldInput} tabular-nums`} defaultValue="£1,234,000" />
       </FormFieldSpecimen>
       <FormFieldSpecimen label="Next review" labelWidth={labelWidth}>
         <input className={fieldInput} defaultValue="25 Mar 2027" />
@@ -324,7 +324,7 @@ export default function AppComponents() {
           <div className={`${SURFACE_CARD} max-w-md overflow-hidden`}>
             <FormFieldSpecimen label="Address"><input className={fieldInput} defaultValue="12 King Street" /></FormFieldSpecimen>
             <FormFieldSpecimen label="Tenure" info><input className={fieldInput} defaultValue="Freehold" /></FormFieldSpecimen>
-            <FormFieldSpecimen label="Passing rent"><input className={`${fieldInput} text-right tabular-nums`} defaultValue="£1,234,000" /></FormFieldSpecimen>
+            <FormFieldSpecimen label="Passing rent"><input className={`${fieldInput} tabular-nums`} defaultValue="£1,234,000" /></FormFieldSpecimen>
             <FormFieldSpecimen label="Vacant"><input type="checkbox" className={CHECKBOX} /></FormFieldSpecimen>
             <FormFieldSpecimen label="Use class" invalid><input className={fieldInput} placeholder="Required" /></FormFieldSpecimen>
           </div>
@@ -370,14 +370,14 @@ export default function AppComponents() {
                 <tr className="border-b border-neutral-200 bg-neutral-50">
                   <th className="h-9 w-10 px-3 text-center"><input type="checkbox" className={`${CHECKBOX} align-middle`} /></th>
                   {[
-                    { label: "Property", align: "left", sorted: "asc" },
-                    { label: "Portfolio", align: "left" },
-                    { label: "Status", align: "left", dot: true },
-                    { label: "Passing rent", align: "right" },
+                    { label: "Property", sorted: true },
+                    { label: "Portfolio" },
+                    { label: "Status", dot: true },
+                    { label: "Passing rent" },
                   ].map((c) => (
-                    <th key={c.label} className={`relative h-9 cursor-grab px-3 ${c.align === "right" ? "text-right" : "text-left"}`}>
-                      <div className={`flex items-center ${c.align === "right" ? "justify-end" : ""}`}>
-                        <span className={`-mx-1 inline-flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-xs font-semibold tracking-wide text-neutral-600 uppercase hover:bg-neutral-200/60 hover:text-neutral-900 ${c.align === "right" ? "flex-row-reverse" : ""}`}>
+                    <th key={c.label} className="relative h-9 cursor-grab px-3 text-left">
+                      <div className="flex items-center">
+                        <span className="-mx-1 inline-flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-xs font-semibold tracking-wide text-neutral-600 uppercase hover:bg-neutral-200/60 hover:text-neutral-900">
                           <span>{c.label}</span>
                           {c.sorted && <ChevronUp className="h-3 w-3" />}
                           {c.dot && <span className="h-1 w-1 rounded-full bg-neutral-900" />}
@@ -398,7 +398,7 @@ export default function AppComponents() {
                     <td className="truncate px-3 py-1.5 font-medium">{name}</td>
                     <td className="truncate px-3 py-1.5 text-neutral-600">{portfolio}</td>
                     <td className="px-3 py-1.5"><span className={`${BADGE} ${BADGE_TONE_CLASS[tone as keyof typeof BADGE_TONE_CLASS]}`}>{status}</span></td>
-                    <td className="px-3 py-1.5 text-right tabular-nums">{rent}</td>
+                    <td className="px-3 py-1.5 tabular-nums">{rent}</td>
                   </tr>
                 ))}
               </tbody>

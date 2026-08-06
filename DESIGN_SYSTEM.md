@@ -259,6 +259,7 @@ posture — the page is for reading, not editing.
 - **Two columns of FormFields** (`grid-cols-2` and friends) — L1.
 - **A horizontal tab strip inside a record** — records navigate down the side
   nav (L3).
+- **`text-right` anywhere** — everything is left-aligned (C1).
 - `text-[11px]` (retired 2026-08-04) — data/labels are `text-xs`.
 - Hand-rolled control styling (any button/field class written longhand).
 - Dark-fill buttons anywhere (`bg-neutral-900` fills).
@@ -270,14 +271,51 @@ posture — the page is for reading, not editing.
 - Colour without meaning; green for positive figures (data, not celebration);
   negative = `text-red-600` with a minus sign (`−£1,234`).
 
-## Conventions that ride along
+## Conventions — C1 to C8
 
-- Zero/absent values display as an em dash, not `0` or `£0`.
-- Currency `£1,234` formatted on blur; dates `DD MMM YYYY`; `tabular-nums`
-  for figures.
-- One `text-lg` heading per panel; hierarchy by weight, not size.
-- Icon-only buttons need `aria-label`; delete asks for confirmation (centred
-  Dialog); Escape closes the top-most layer.
+How a VALUE is written, wherever it appears — a table cell, a form field, a
+KPI tile, a printed report. Tokens govern colour and size, components govern
+shape, layout governs where the blocks sit; conventions govern what the reader
+actually sees in the cell. Numbered like the layout rules, and rendered in the
+catalogue under **Application › Conventions**.
+
+**C1 — everything is LEFT-aligned. Nothing is ever right-aligned** (Joe,
+2026-08-06): not a figure, not a currency, not a total, not in a table, a
+form, a tile or a report. Figures still carry `tabular-nums` — that is what
+makes a column of them legible, and it always was. Right-aligning pushes a
+value away from the label or heading that names it and leaves a ragged gap
+down the middle of every row. *Guarded*: `text-right` in an app's source
+fails the check. `EntityTable`'s `ColumnDef.align` was removed in v0.5.0.
+
+**C2 — zero and absent are an em dash.** Never `0`, never `£0`, never an empty
+cell. A dash says "nothing here"; a zero says "measured, and it is zero" —
+different facts.
+
+**C3 — currency is `£1,234`, formatted on blur.** Thousands separated, no
+pence unless pence are the point. The field shows the raw number while you
+type and formats when you leave it.
+
+**C4 — dates are `DD MMM YYYY`.** `25 Mar 2027`. Never `25/03/2027` — an
+all-numeric date is ambiguous the moment anyone outside the UK reads it.
+
+**C5 — negatives are red with a REAL minus sign** (`−£1,234`, U+2212, not a
+hyphen); positives are plain ink (`DELTA_POS`). Green for a positive figure is
+banned — this is data, not celebration. Colour never carries meaning alone:
+the minus sign does the work, the red reinforces it.
+
+**C6 — a row is ONE line: truncate, never wrap.** Every table cell and nav
+item truncates. A wrapping row breaks the h-9 rhythm and makes a list
+impossible to scan.
+
+**C7 — one `text-lg` heading per panel; hierarchy by weight, not size.**
+`text-lg` is the dialog title and nothing else. A fourth text size is banned.
+
+**C8 — icon-only buttons carry an `aria-label`; delete confirms in a centred
+Dialog; Escape closes the top-most layer.**
+
+All eight hold for Print — a report is a table. The website inherits C5 and
+C8. The only medium-specific part is currency precision: a report may show
+pence where a screen would not.
 
 ## Exempt (deliberate, not drift)
 
