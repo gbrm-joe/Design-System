@@ -186,6 +186,11 @@ table search `w-64`, alone at the right end of the toolbar.
   hairline), baseline `CHART_AXIS`, all chart text 12 px `CHART_INK`. Text
   never wears a series colour — the swatch beside it carries identity.
   Adjacent and stacked fills keep a 2 px white gap.
+- **Draw the plot at 1:1** — 12 px means twelve real pixels. An SVG with a
+  `viewBox` stretched to fill its card scales the text, the hairlines and the
+  2 px gaps with it (the catalogue's own axis labels were rendering at 14 and
+  18 px before this was caught). Measure the container and draw at its true
+  width instead of scaling a fixed coordinate box.
 - **Legend**: two or more series always get one (`CHART_LEGEND`, under the
   plot); a single series is named by the card header, no legend.
 - **Deltas** (`+4.2%`) follow the figure rule: positive is plain ink

@@ -1,6 +1,17 @@
-// Shared catalogue chrome: the specimen wrapper, the section card and the
-// inline icon set. The apps use lucide; the catalogue stays dependency-free.
-import { SURFACE_CARD, CARD_HEADER } from "../../src/design";
+// Shared catalogue chrome: the specimen wrapper, the section card, the one
+// chart and the inline icon set. The apps use lucide and a chart library; the
+// catalogue stays dependency-free.
+import { useLayoutEffect, useRef, useState } from "react";
+import {
+  SURFACE_CARD,
+  CARD_HEADER,
+  CHART_SERIES,
+  CHART_GRID,
+  CHART_AXIS,
+  CHART_INK,
+  CHART_LEGEND,
+  CHART_LEGEND_SWATCH,
+} from "../../src/design";
 
 export const icon = "h-3.5 w-3.5";
 
@@ -91,6 +102,89 @@ export function Verdict({ ok, children }: { ok: boolean; children: React.ReactNo
     <div className="flex items-center gap-1.5 text-xs font-medium">
       <span className={ok ? "text-emerald-700" : "text-red-600"}>{ok ? "✓ Correct" : "✗ Wrong"}</span>
       <span className="text-neutral-500">— {children}</span>
+    </div>
+  );
+}
+
+/**
+ * THE catalogue chart — a grouped bar chart drawn 1:1.
+ *
+ * The chart rules are in real pixels: text is 12px, gridlines are hairlines,
+ * adjacent fills keep a 2px white gap. A `viewBox` stretched to fill its card
+ * scales all three — the axis labels were rendering at 14 and 18px — so the
+ * SVG is measured and drawn at its true width instead. Nothing here is a
+ * chart library; it is the rules, rendered.
+ */
+export function GroupedBarChart({
+  data,
+  ticks,
+  max,
+  fmt,
+  series,
+  height = 172,
+}: {
+  data: Array<{ label: string; a: number; b: number }>;
+  ticks: number[];
+  max: number;
+  fmt: (v: number) => string;
+  series: [string, string];
+  height?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.round(e.contentRect.width)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Geometry in real pixels. 46px gutter holds the widest y label at 12px.
+  const left = 46;
+  const top = 8;
+  const bottom = height - 22; // the x-label line sits under the baseline
+  const plotW = Math.max(0, w - left - 4);
+  const groupW = plotW / Math.max(1, data.length);
+  const barW = Math.max(6, Math.min(24, (groupW - 14) / 2));
+  const y = (v: number) => bottom - (v / max) * (bottom - top);
+
+  return (
+    <div ref={ref} className="w-full">
+      {w > 0 && (
+        <svg width={w} height={height} className="block">
+          {/* Horizontal gridlines only; the baseline is a shade darker. */}
+          {ticks.map((v) => (
+            <g key={v}>
+              <line x1={left} x2={w - 4} y1={y(v)} y2={y(v)} stroke={v === 0 ? CHART_AXIS : CHART_GRID} strokeWidth="1" />
+              <text x={left - 8} y={y(v) + 4} textAnchor="end" fontSize="12" fill={CHART_INK}>{fmt(v)}</text>
+            </g>
+          ))}
+          {data.map((g, i) => {
+            // The pair is centred in its group with a 2px white gap between.
+            const cx = left + groupW * i + groupW / 2;
+            const x0 = cx - barW - 1;
+            return (
+              <g key={g.label}>
+                <rect x={x0} y={y(g.a)} width={barW} height={bottom - y(g.a)} rx="2" fill={CHART_SERIES[0]} />
+                <rect x={x0 + barW + 2} y={y(g.b)} width={barW} height={bottom - y(g.b)} rx="2" fill={CHART_SERIES[1]} />
+                <text x={cx} y={height - 6} textAnchor="middle" fontSize="12" fill={CHART_INK}>{g.label}</text>
+              </g>
+            );
+          })}
+        </svg>
+      )}
+      {/* Two or more series always get a legend; the swatch carries identity,
+          never the text colour. */}
+      <div className={`${CHART_LEGEND} mt-2`}>
+        {series.map((name, i) => (
+          <span key={name} className="flex items-center gap-1.5">
+            <span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[i] }} />
+            {name}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

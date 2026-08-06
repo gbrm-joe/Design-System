@@ -39,18 +39,13 @@ import {
   PANEL_GROUP_LABEL,
   BREADCRUMB_PARENT,
   BREADCRUMB_SEP,
-  CHART_SERIES,
-  CHART_GRID,
-  CHART_AXIS,
-  CHART_INK,
-  CHART_LEGEND,
-  CHART_LEGEND_SWATCH,
 } from "../../../src/design";
 import { BADGE_TONE_CLASS } from "../../../src/badge-colours";
 import { fieldInput } from "../../../src/components/field-controls";
 import {
   Section,
   Anatomy,
+  GroupedBarChart,
   Verdict,
   CoreRule,
   Plus,
@@ -194,34 +189,19 @@ function ChartsSide() {
       <div className={`${SURFACE_CARD} overflow-hidden`}>
         <div className={CARD_HEADER}>Rent vs ERV by unit</div>
         <div className="p-3">
-          <svg viewBox="0 0 340 150" className="w-full">
-            {[0, 200, 400, 600].map((v) => (
-              <g key={v}>
-                <line x1="40" x2="334" y1={128 - (v / 640) * 112} y2={128 - (v / 640) * 112} stroke={v === 0 ? CHART_AXIS : CHART_GRID} strokeWidth="1" />
-                <text x="36" y={131 - (v / 640) * 112} textAnchor="end" fontSize="10" fill={CHART_INK}>£{v}k</text>
-              </g>
-            ))}
-            {[
+          <GroupedBarChart
+            height={150}
+            max={640}
+            ticks={[0, 200, 400, 600]}
+            fmt={(v) => `£${v}k`}
+            series={["Passing rent", "ERV"]}
+            data={[
               { label: "Ground", a: 480, b: 540 },
               { label: "First", a: 320, b: 330 },
               { label: "Second", a: 260, b: 300 },
               { label: "Third", a: 174, b: 190 },
-            ].map((g, i) => {
-              const x0 = 44 + i * 73 + 10;
-              const h = (v: number) => (v / 640) * 112;
-              return (
-                <g key={g.label}>
-                  <rect x={x0} y={128 - h(g.a)} width="22" height={h(g.a)} rx="2" fill={CHART_SERIES[0]} />
-                  <rect x={x0 + 24} y={128 - h(g.b)} width="22" height={h(g.b)} rx="2" fill={CHART_SERIES[1]} />
-                  <text x={x0 + 23} y="142" textAnchor="middle" fontSize="10" fill={CHART_INK}>{g.label}</text>
-                </g>
-              );
-            })}
-          </svg>
-          <div className={`${CHART_LEGEND} mt-2`}>
-            <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[0] }} />Passing rent</span>
-            <span className="flex items-center gap-1.5"><span className={CHART_LEGEND_SWATCH} style={{ background: CHART_SERIES[1] }} />ERV</span>
-          </div>
+            ]}
+          />
         </div>
       </div>
     </div>
