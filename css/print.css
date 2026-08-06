@@ -1,0 +1,19 @@
+/* @gbrm/design — page setup for the Print system (documents and reports).
+   Import from the report's stylesheet, alongside theme.css:
+
+     @import "@gbrm/design/print.css";
+
+   Element styling comes from the PRINT_* tokens in the package; only the
+   page geometry lives here. */
+
+@page {
+  size: A4 portrait;
+  margin: 15mm;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+}

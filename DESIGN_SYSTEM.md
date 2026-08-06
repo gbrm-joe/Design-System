@@ -1,9 +1,11 @@
 # Design System
 
-The shared rulebook for every manager app. The single source of truth for
-element styling is **`src/design.ts`** in this repo — class-string primitives
-every call site composes, shipped to each app as the **`@gbrm/design`**
-package. `npm run check:design` (the packaged drift guard) fails an app's
+The shared rulebook across THREE media: the **manager apps**, **print**
+(documents and reports generated from app data) and the **website** (the
+public marketing front end). One family; each medium translates the core rule
+to its own surface. The single source of truth for element styling is
+**`src/design.ts`** in this repo — class-string primitives every call site
+composes, shipped to each app as the **`@gbrm/design`** package. `npm run check:design` (the packaged drift guard) fails an app's
 build on hand-rolled control styling. The catalogue (`catalogue/` in this
 repo — `npm run dev`) renders every primitive from the working copy of the
 tokens and is the reference rendering; if a screen doesn't match it, the
@@ -131,6 +133,59 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
   with a real minus sign. Never colour alone.
 - One plot height: `CHART_HEIGHT`.
 
+## Print — documents and reports
+
+The second medium: A4 documents generated from app data (reports, schedules,
+statements). Page geometry ships as `@gbrm/design/print.css` (A4 portrait,
+15mm margins); element styling is the `PRINT_*` tokens.
+
+- **The core rule translated**: paper has no interaction, so ink on white
+  with hairline structure replaces interactive-white-on-grey. Fills never
+  exceed `neutral-100` — structure comes from rules (lines), not grey bands.
+  Headline figures sit in bordered, unfilled boxes (`PRINT_TILE`).
+- **Three text sizes in pt, no exceptions**: 9pt data and labels
+  (`PRINT_LABEL` is uppercase muted), 12pt section headings
+  (`PRINT_SECTION`, closed with a hairline), 18pt document title
+  (`PRINT_TITLE` — once, page one, with a `PRINT_META` line under it:
+  source app · period · generated date).
+- **Tables**: hairline row dividers only — no vertical rules, no zebra
+  striping. Column headers are uppercase muted over a mid-weight rule
+  (`PRINT_TH`); a totals row closes with a heavy rule and bold figures
+  (`PRINT_ROW_TOTAL`).
+- **Colour only where it carries meaning**: `CHART_SERIES` in charts (the
+  palette is validated on white) and red negatives. Never decorative.
+- **Page discipline**: every table, chart and figure band avoids breaking
+  across pages (`PRINT_AVOID_BREAK`); top-level sections may force a new page
+  (`PRINT_PAGE_BREAK`). The running footer (`PRINT_FOOTER`) is document title
+  left, "Page X of Y" right.
+- Screen conventions ride along: em dash for zero/absent, `DD MMM YYYY`,
+  `£1,234` tabular, negatives red with a real minus sign.
+- The legacy `rpt-*` report pre-dates these tokens; each report migrates when
+  next touched.
+
+## Website — the marketing front end
+
+The third medium: the public site for the apps. Same family, different
+posture — the page is for reading, not editing.
+
+- **The ground is white** — the inverse of the app's grey-chrome stack. Grey
+  bands (`WEB_SECTION_ALT`, `neutral-50` with hairline top/bottom borders)
+  alternate with white sections for rhythm. No other background colours.
+- **Four text sizes**: display (`WEB_DISPLAY`, 5xl), section title
+  (`WEB_SECTION_TITLE`, 3xl), body (`WEB_BODY`, base), small (`WEB_SMALL`,
+  sm). Nothing between. `WEB_EYEBROW` is the small uppercase kicker above a
+  headline.
+- **ONE deliberate inversion (2026-08-05)**: the website allows a single
+  dark-fill button — `WEB_BTN_CTA` — because a marketing page has one job and
+  its lead action must dominate. One CTA per page view; every other action is
+  `WEB_BTN` (white, bordered — the app's language). Never two dark buttons
+  side by side. Dark fills remain banned in the apps.
+- **Structure**: one container measure (`WEB_CONTAINER`, max-w-5xl), one
+  section rhythm (`WEB_SECTION`, py-20), white sticky header with a hairline
+  (`WEB_NAV`), dark footer (`WEB_FOOTER` — mirroring the app's darkest
+  surface). Cards are the app's white bordered card, roomier (`WEB_CARD`).
+- Charts or figures shown on the site follow the app's chart rules verbatim.
+
 ## Banned
 
 - Close / prev / next buttons in any header (Delete is the only header square).
@@ -156,7 +211,8 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
 
 ## Exempt (deliberate, not drift)
 
-Auth screens (login/forgot/reset), the print report (`rpt-*`), devtools
+Auth screens (login/forgot/reset), the legacy print report (`rpt-*` — until
+it migrates to the `PRINT_*` tokens), devtools
 overlays, and the Model grid's grey footer tiles (white is reserved for input
 cells there). Everything else composes design.ts.
 

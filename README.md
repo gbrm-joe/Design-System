@@ -2,11 +2,15 @@
 
 The shared design system for our manager apps (Property, Survey, Project,
 People, OKR, Data, Development). One set of tokens, one rulebook, one drift
-guard — installed into each app as a versioned package.
+guard — installed into each app as a versioned package. It covers three
+media: the **apps**, **print** (documents and reports off app data, `PRINT_*`
+tokens + `print.css`) and the **website** (the marketing front end, `WEB_*`
+tokens). The catalogue's sidebar switches between them.
 
 **The design language in one line:** anything you can click or edit sits on a
 white background with a border, on grey chrome. Interactive = white. Static
-chrome = grey. Full rules in `DESIGN_SYSTEM.md`.
+chrome = grey. Print and website translate the same language to their media.
+Full rules in `DESIGN_SYSTEM.md`.
 
 ## What's in the package
 
@@ -14,6 +18,7 @@ chrome = grey. Full rules in `DESIGN_SYSTEM.md`.
 |---|---|---|
 | Tokens | `src/design.ts` | Every styleable primitive as a named class-string constant (BTN, FIELD, TAG, SURFACE_*, …). Apps import and compose these; nobody writes control styling longhand. |
 | Theme variables | `css/theme.css` | The Tailwind v4 scale the tokens depend on (panelgap, desk breakpoint, sidebar width). |
+| Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
 | Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, when each primitive applies. |
 | Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens. |
 
