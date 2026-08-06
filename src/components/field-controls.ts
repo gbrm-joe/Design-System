@@ -16,3 +16,8 @@ export const fieldSelect =
 /** Transparent textarea. */
 export const fieldTextarea =
   "w-full resize-none bg-transparent text-xs text-neutral-900 placeholder:text-neutral-300 outline-none";
+
+/** Transparent input for a FIGURE — right-aligned and tabular, per the rule
+ *  that all figures are right-aligned tabular-nums. */
+export const fieldInputNumeric =
+  "w-full bg-transparent text-right text-xs tabular-nums text-neutral-900 outline-none";

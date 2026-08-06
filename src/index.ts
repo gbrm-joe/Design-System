@@ -43,3 +43,10 @@ export {
 } from "./components/panel-stack-provider";
 export type { PanelEntry } from "./components/panel-stack-provider";
 export { PanelStackRenderer } from "./components/panel-stack-renderer";
+export {
+  PanelNav,
+  PanelSubHeader,
+  PanelBody,
+  PanelLayout,
+} from "./components/panel-nav";
+export type { PanelNavItem, PanelNavGroup } from "./components/panel-nav";

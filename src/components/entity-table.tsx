@@ -53,12 +53,18 @@ export interface ColumnDef<T> {
   align: "left" | "right";
   /** Default relative width — normalised to a percentage of the table. */
   width: number;
-  groupable: boolean;
-  filterable: boolean;
+  /** May be used as a grouping key. */
+  groupable?: boolean;
+  /** May be filtered via a value checklist. */
+  filterable?: boolean;
   /** Cannot be hidden via the Columns menu. */
   locked?: boolean;
   /** Summed in per-group / footer totals. */
   aggregate?: "count";
+  /** How that total renders. Defaults to a plain locale-formatted number with
+   *  an em dash for zero. Give a column money or hours formatting here rather
+   *  than forking the table. */
+  renderTotal?: (value: number) => ReactNode;
   sortValue: (r: T) => string | number;
   /** Display string for grouping / filter options (filterable columns only). */
   groupValue?: (r: T) => string;
@@ -1097,7 +1103,11 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
             key={c.key}
             className={`truncate px-3 py-1.5 text-right ${cellClassName}`}
           >
-            {rowTotals[c.key] ? rowTotals[c.key].toLocaleString("en-GB") : "—"}
+            {c.renderTotal
+              ? c.renderTotal(rowTotals[c.key] ?? 0)
+              : rowTotals[c.key]
+                ? rowTotals[c.key].toLocaleString("en-GB")
+                : "—"}
           </td>
         ) : (
           <td key={c.key} className="px-3 py-1.5" />
