@@ -20,8 +20,8 @@ Full rules in `DESIGN_SYSTEM.md`.
 | Components | `src/components/` | The shared structural components — `EntityTable`, the panel stack (`PanelShell`/`PanelHeader`/`PanelStackRenderer`), `Sheet`, `FormField`, `ColourBadge`, `Button`, `Dialog`. Tokens make an element the right *colour and size*; these make a screen the right *shape*. |
 | Theme variables | `css/theme.css` | The Tailwind v4 scale the tokens depend on (panelgap, desk breakpoint, sidebar width). |
 | Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
-| Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, when each primitive applies. |
-| Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens. |
+| Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, layout (L1–L7), when each primitive applies. |
+| Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens, or when a layout rule it can see is broken. |
 
 ## Installing into an app
 
@@ -61,10 +61,25 @@ Full rules in `DESIGN_SYSTEM.md`.
 
 ## The catalogue
 
-`catalogue/` is a small standalone site rendering every token from the
-**working copy** of `src/design.ts` — edit a token, refresh, see it. It is the
-reference rendering: if an app screen doesn't match the catalogue, the screen
-is wrong. Review every design change here before tagging a release.
+`catalogue/` is a small standalone site rendering the **working copy** of
+`src/` — edit a token or a component, refresh, see it. It is the reference
+rendering: if an app screen doesn't match the catalogue, the screen is wrong.
+Review every design change here before tagging a release.
+
+Its sidebar switches media (Application · Print · Website); **Application** has
+three pages:
+
+| Page | What it shows |
+|---|---|
+| Tokens | Every class-string primitive, rendered. |
+| Components | The v0.4.0 shared components as whole screens — the record panel, `PanelNav`/sub-header/body, the form block, `EntityTable`'s toolbar and column header, the `FormField` row, `ColourBadge` and `Dialog`. |
+| Layout | The numbered layout rules L1–L7 — where the blocks sit — each drawn right and wrong. |
+
+The Components page **reproduces** each component's markup against the same
+tokens rather than importing it: the components pull in Next, lucide and
+base-ui, and the catalogue stays dependency-free beyond Vite/React/Tailwind.
+If a component's shape ever diverges from what the catalogue draws, one of the
+two is wrong — fix it in the same PR.
 
 ```sh
 cd catalogue && npm install && npm run dev

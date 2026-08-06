@@ -29,6 +29,21 @@ check() {
   fi
 }
 
+# A LAYOUT check: flags `pattern` only in files that also contain `anchor`.
+# Layout rules are about where blocks sit relative to each other, so a bare
+# grep can't see them — the pair can. Same .design-check-ignore exemption.
+check_pair() {
+  label="$1"; anchor="$2"; pattern="$3"
+  hits=$(grep -rlE "$anchor" src --include="*.tsx" 2>/dev/null | while IFS= read -r f; do
+    grep -nE "$pattern" "$f" 2>/dev/null | sed "s|^|$f:|"
+  done | grep -v "lib/design.ts" | exempt)
+  if [ -n "$hits" ]; then
+    echo "✗ $label"
+    echo "$hits"
+    fail=1
+  fi
+}
+
 # Retired names and old control signatures.
 check "TOOLBAR_BTN is retired — import BTN/BTN_PRIMARY from @/lib/design" "TOOLBAR_BTN"
 check "h-8 toolbar-style button — use BTN (h-7) from @/lib/design" "h-8 items-center"
@@ -48,6 +63,19 @@ check "DialogTitle size override — text-lg is the component default" "DialogTi
 check "checkbox accent drift — use CHECKBOX from @/lib/design" "accent-neutral-900\|accent-neutral-700"
 check "FormField label cell longhand — use FIELD_ROW_LABEL" "bg-neutral-50 px-3 py-2 text-xs font-medium uppercase"
 check "transparent field input re-declared — import fieldInput from ui/field-controls" "w-full bg-transparent text-xs text-neutral-900 placeholder:text-neutral-300"
+
+# ── Layout rules (DESIGN_SYSTEM.md → Layout, L1–L7) ────────────────────────
+# L1 — a detail panel's fields sit in ONE column on the LEFT (~w-1/3); the
+# right side carries charts and KPIs. A multi-column grid in a file that
+# renders FormFields is the two-column form the rule exists to stop.
+check_pair "L1 — FormFields in a multi-column grid: fields are ONE column, on the left (~w-1/3); charts/KPIs go right" \
+  "<FormField" "grid-cols-[2-9]"
+
+# The package ships these; a local re-declaration is drift by definition
+# (DESIGN_SYSTEM.md → Banned). Catches the record that grows its own tab
+# strip or panel chrome instead of importing PanelLayout.
+check "a shipped component re-declared locally — import it from @gbrm/design" -E \
+  "(function|const) (EntityTable|PanelHeader|PanelNav|PanelSubHeader|PanelBody|PanelLayout|PanelShell|PanelStackRenderer|FormField|ColourBadge)[ (<=]"
 
 if [ "$fail" -eq 0 ]; then
   echo "✓ design guard clean"

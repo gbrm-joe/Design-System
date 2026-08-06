@@ -1,6 +1,6 @@
-// The Application system — every token the manager apps compose. Moved here
-// unchanged when the catalogue gained its sidebar (Print and Website pages
-// sit alongside).
+// The Application system → Tokens. Every token the manager apps compose.
+// Its siblings under Application: Components (the v0.4.0 shared components)
+// and Layout (where the blocks sit).
 import {
   GAP,
   CONTROL_H,

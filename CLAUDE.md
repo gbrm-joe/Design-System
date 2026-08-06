@@ -17,9 +17,14 @@ styling locally from here, and never edit an app from this repo.
 ## Ground rules
 
 - Plain, concise UK English. Be blunt. No verbose replies.
-- Every visual rule has THREE homes: the token (`src/design.ts`), the written
-  rule (`DESIGN_SYSTEM.md`), and the rendering (`catalogue/`). A change
-  touches all three or it is not done.
+- Every visual rule has THREE homes: the implementation (`src/design.ts` for a
+  token, `src/components/` for a shape, `scripts/check-design.sh` where a
+  machine can see it), the written rule (`DESIGN_SYSTEM.md`), and the
+  rendering (`catalogue/`). A change touches all three or it is not done —
+  a component with no catalogue page is half-shipped.
+- Layout rules are NUMBERED (`DESIGN_SYSTEM.md` → Layout, L1–L7) and drawn on
+  the catalogue's Layout page. Never bury a layout rule in a prose bullet:
+  that is how Project Manager shipped a two-column project form.
 - The displayed name is **"Design System"** — never "GBRM Design System".
   The package id `@gbrm/design` and the repo address never change (renaming
   them churns every app's pin).

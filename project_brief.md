@@ -16,6 +16,13 @@ background with a border, on grey chrome. Interactive = white. Static chrome
 **In the package** (`@gbrm/design`, installed by apps via pinned tag):
 
 - Class-string tokens for every styleable primitive (`src/design.ts`)
+- Shared React components (`src/components/`) — promoted in v0.4.0 once two
+  apps needed the identical thing: `EntityTable`, the panel stack, `Sheet`,
+  `FormField`, `ColourBadge`, `Button`, `Dialog`. Tokens fix an element's
+  colour and size; these fix a screen's shape, which no class string can
+  enforce
+- Layout rules L1–L7 — where the blocks sit; numbered, drawn in the catalogue
+  and partly guarded (v0.5.0)
 - Theme scale variables — panelgap, desk breakpoint, sidebar width
   (`css/theme.css`)
 - Graphics and dashboard standards — validated chart palette, chart chrome,
@@ -28,9 +35,8 @@ background with a border, on grey chrome. Interactive = white. Static chrome
 
 **Deliberately out:**
 
-- Shared React components (tables, panels, form fields) — each app implements
-  its own against the rulebook; a component is promoted here only once two
-  apps need the identical thing
+- Any component only ONE app needs — the promotion bar is unchanged: it moves
+  here once a second app needs the identical thing, and not before
 - Fonts and brand colours — per app
 - The catalogue (`catalogue/`) ships in the repo but not in the package
 
@@ -38,9 +44,10 @@ background with a border, on grey chrome. Interactive = white. Static chrome
 
 | App | Status |
 |---|---|
-| Property Manager | Live — first adopter; the system was built there |
+| Property Manager | Live — first adopter; the system was built there. Still holds local copies of the v0.4.0 components; deleting them in favour of the package is a separate job |
+| Project Manager | Live on v0.4.0 |
 | Survey Manager | **Do not touch** (Joe, 2026-08-05) until told otherwise |
-| Project / People / OKR / Data / Development Manager | Not yet connected |
+| People / OKR / Data / Development Manager | Not yet connected |
 
 ## How change flows
 
@@ -54,4 +61,8 @@ Carved out of Property Manager on 2026-08-05. v0.1.0: tokens, theme, rulebook,
 guard. v0.2.0: renamed to plain "Design System"; graphics and dashboards
 section (chart palette, chart chrome, dashboard layout rules). v0.3.0:
 broadened to three media — Print (`PRINT_*` tokens, `print.css`) and Website
-(`WEB_*` tokens); catalogue gained its side nav.
+(`WEB_*` tokens); catalogue gained its side nav. v0.4.0: the shared components
+moved into the package. v0.5.0: the catalogue gained its Application sub-nav
+(Tokens · Components · Layout) so the components have a reference rendering,
+and layout was promoted from prose to numbered rules L1–L7 — L1 (fields in ONE
+left column) now fails the drift guard.

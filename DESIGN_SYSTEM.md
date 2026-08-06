@@ -7,9 +7,10 @@ to its own surface. The single source of truth for element styling is
 **`src/design.ts`** in this repo — class-string primitives every call site
 composes, shipped to each app as the **`@gbrm/design`** package. `npm run check:design` (the packaged drift guard) fails an app's
 build on hand-rolled control styling. The catalogue (`catalogue/` in this
-repo — `npm run dev`) renders every primitive from the working copy of the
-tokens and is the reference rendering; if a screen doesn't match it, the
-screen is wrong. History and rationale live in Property Manager's
+repo — `npm run dev`) renders every primitive, every shared component and
+every layout rule from the working copy of `src/` and is the reference
+rendering; if a screen doesn't match it, the screen is wrong. Its Application
+section has three pages — **Tokens**, **Components**, **Layout**. History and rationale live in Property Manager's
 DECISIONS.md, where the system was first built; each app keeps its own
 navigation/interaction spec.
 
@@ -111,11 +112,61 @@ is drift, even if every token inside is correct.
   header, the parent segment clickable (it closes the panel, returning to the
   table); a bare title with no way back is wrong. **One breadcrumb style
   everywhere**: muted clickable parent, ChevronRight separator, dark title —
-  never a slash or a back-arrow. Form block: single left
-  column ~w-1/3, one compact block, no sub-headers; right side for
-  charts/KPIs.
+  never a slash or a back-arrow. The body's layout is **L1** and **L3** below —
+  fields left in ONE column, charts and KPIs right.
 - **Model sub-header** — scenario picker + grain toggle + collapse/nav
   controls, all h-7 in the h-9 chrome bar.
+
+## Layout — L1 to L7
+
+Tokens govern colour and size; components govern shape; **layout governs where
+the blocks sit** — how wide, in how many columns, in what order. A screen can
+pass the drift guard with every token correct and still be laid out wrong, so
+these are numbered rules, not prose: cite them in review ("that's L1"). They
+are rendered in the catalogue under **Application › Layout**, and the ones a
+machine can see are checked by `scripts/check-design.sh`.
+
+**L1 — a detail panel's fields sit in ONE column, on the LEFT, ~a third of the
+width. One column, never two.** The FormFields form one compact block with no
+sub-headers inside it; the remaining two thirds carry the charts and KPIs the
+record exists to show. A second column of fields halves the label width,
+doubles the eye's travel down the form and leaves nowhere for the figures.
+Full width with nothing beside it is equally wrong. If a record needs
+sections, they are side-nav entries (L3), not headings inside the block.
+*Guarded*: a `grid-cols-2/3/4` (or a `md:`/`lg:` variant) in a file that
+renders `FormField` fails the check.
+
+**L2 — a page is: main nav · h-12 title band · content inset by the ONE gap.**
+Content starts on the band's border line, never floating below it with a
+margin. A dashboard is a page like any other — the same h-12 band, never a
+hero title with a subtitle under it.
+
+**L3 — a record is: h-12 header band · side nav left · h-9 sub-header · body.**
+Records navigate DOWN their own left column (`PanelNav`), exactly like the main
+sidebar. **Horizontal tabs in a record are banned** — a tab strip is a
+different navigation model and reads as a different application. The panel is
+`w-3/4` and its backdrop starts at `left-[var(--sidebar-w)]`, so the main nav
+stays live behind an open record.
+
+**L4 — a table opens with two stacked h-9 bars.** The toolbar bar and the
+column header row are the same height and the same grey, so they read as one
+block of table chrome; nothing sits between them. The toolbar's slot order is
+fixed on every table in every app (see Tables above).
+
+**L5 — ONE gap, 4px, between everything, and as the page inset.**
+`gap-panelgap` / `p-panelgap`. No `gap-1`/`gap-2`/`gap-3` between controls,
+cards or sections, and no larger outer margin on a page.
+
+**L6 — a KPI band is ONE band of equal widths, and it is optional.** `flex-1`
+tiles with the one gap, all the same width, grey because they are read-only.
+A table does not imply a band. Figures never split across two rows of tiles,
+and no tile wears its own accent colour.
+
+**L7 — the fixed widths.** Main nav `w-52` (`--sidebar-w` matches it, so a
+panel sits flush against it) · panel side nav `w-48` expanded / `w-9`
+collapsed · detail panel `w-3/4` · form block `~w-1/3` (L1) · FormField label
+cell `w-40` default, narrowed to `w-28` in a tight panel and never wider ·
+table search `w-64`, alone at the right end of the toolbar.
 
 ## Graphics and dashboards
 
@@ -200,6 +251,9 @@ posture — the page is for reading, not editing.
 - Close / prev / next buttons in any header (Delete is the only header square).
 - A local copy of anything the package ships — a per-app table, panel header,
   panel stack, sheet, form-field row or badge. Import it or it is drift.
+- **Two columns of FormFields** (`grid-cols-2` and friends) — L1.
+- **A horizontal tab strip inside a record** — records navigate down the side
+  nav (L3).
 - `text-[11px]` (retired 2026-08-04) — data/labels are `text-xs`.
 - Hand-rolled control styling (any button/field class written longhand).
 - Dark-fill buttons anywhere (`bg-neutral-900` fills).

@@ -34,6 +34,21 @@ export const PrinterIcon = ({ className }: { className?: string }) => (
 export const GlobeIcon = ({ className }: { className?: string }) => (
   <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></svg>
 );
+export const ChevronUp = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m6 15 6-6 6 6" /></svg>
+);
+export const Info = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+);
+export const Layers = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5M3 13l9 5 9-5" /></svg>
+);
+export const PanelLeftClose = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18m7-11-3 2 3 2" /></svg>
+);
+export const PanelLeftOpen = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18m4-11 3 2-3 2" /></svg>
+);
 
 /** One specimen: the rendered element with its token name underneath. */
 export function Spec({ name, children }: { name: string; children: React.ReactNode }) {
@@ -45,14 +60,38 @@ export function Spec({ name, children }: { name: string; children: React.ReactNo
   );
 }
 
-/** One catalogue section: white card, grey uppercase header strip. */
-export function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+/** One catalogue section: white card, grey uppercase header strip.
+ *  `stack` swaps the wrapping specimen row for a full-width column — used by
+ *  the Components and Layout pages, whose specimens are whole screens. */
+export function Section({ title, note, stack, children }: { title: string; note?: string; stack?: boolean; children: React.ReactNode }) {
   return (
     <section className={`${SURFACE_CARD} overflow-hidden`}>
       <div className={CARD_HEADER}>{title}</div>
       {note && <div className="border-b border-neutral-100 px-3 py-2 text-xs text-neutral-500">{note}</div>}
-      <div className="flex flex-wrap items-end gap-x-6 gap-y-4 p-4">{children}</div>
+      <div className={stack ? "flex flex-col gap-5 p-4" : "flex flex-wrap items-end gap-x-6 gap-y-4 p-4"}>{children}</div>
     </section>
+  );
+}
+
+/** A full-width specimen: title, the rule in one line, then the rendering. */
+export function Anatomy({ name, rule, children }: { name: string; rule?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="font-mono text-[10px] text-neutral-400">{name}</div>
+      {rule && <div className="text-xs text-neutral-600">{rule}</div>}
+      {children}
+    </div>
+  );
+}
+
+/** Correct / wrong marker above a specimen. Green is banned for figures, not
+ *  for a verdict — this is a label, not data. */
+export function Verdict({ ok, children }: { ok: boolean; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs font-medium">
+      <span className={ok ? "text-emerald-700" : "text-red-600"}>{ok ? "✓ Correct" : "✗ Wrong"}</span>
+      <span className="text-neutral-500">— {children}</span>
+    </div>
   );
 }
 
