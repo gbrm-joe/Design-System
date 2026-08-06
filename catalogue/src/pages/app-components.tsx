@@ -12,6 +12,21 @@ import {
   NAV_ITEM,
   NAV_ICON,
   NAV_COLLAPSE,
+  NAV_PAD,
+  NAV_GROUP_LABEL,
+  NAV_GROUP_RULE,
+  NAV_USER,
+  NAV_ITEM_INSET,
+  NAV_ITEM_INSET_NESTED,
+  NAV_ACTIVE,
+  NAV_IDLE,
+  NAV_MUTED,
+  NAV_COUNT,
+  SURFACE_NAV,
+  BRAND_ACTIVE,
+  BRAND_IDLE,
+  BRAND_MUTED,
+  BRAND_BORDER,
   HEADER_H,
   BTN,
   BTN_ACTIVE,
@@ -63,33 +78,126 @@ import {
 
 // ── The pieces, each copied from its component ─────────────────────────────
 
-/** PanelNav → NavGroupLabel. h-9, full-bleed borders (-mx-2 cancels the p-2). */
+/** MainNav → one row. L8: 24px in, 36px nested, measured from the nav's edge.
+ *  States are translucent overlays, so they hold on any brand colour. */
+function MainNavRow({ label, active, soon, indent }: { label: string; active?: boolean; soon?: boolean; indent?: boolean }) {
+  return (
+    <div
+      className={`${NAV_ITEM} shrink-0 gap-2 ${indent ? NAV_ITEM_INSET_NESTED : NAV_ITEM_INSET} ${
+        soon ? `cursor-not-allowed ${BRAND_MUTED}` : active ? BRAND_ACTIVE : BRAND_IDLE
+      }`}
+    >
+      <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+      <span className="flex-1 truncate">{label}</span>
+      {soon && <span className={`shrink-0 text-xs uppercase tracking-wide ${BRAND_MUTED}`}>Soon</span>}
+    </div>
+  );
+}
+
+/** MainNav, expanded — w-52. App band, groups, wordmark, user, collapse. */
+function MainNavSpecimen() {
+  return (
+    <div className={`flex h-[30rem] w-52 shrink-0 flex-col ${SURFACE_NAV}`}>
+      <div className={`flex ${HEADER_H} shrink-0 items-center gap-2.5 border-b ${BRAND_BORDER} px-3`}>
+        <div className="h-7 w-7 shrink-0 rounded-md bg-black/25" />
+        <span className="truncate text-sm leading-none font-semibold tracking-tight text-white">Property Manager</span>
+      </div>
+      <nav className={`flex min-h-0 flex-1 flex-col gap-panelgap overflow-y-auto py-panelgap ${NAV_PAD}`}>
+        <MainNavRow label="Dashboard" active />
+        <MainNavRow label="Portfolios" />
+        <MainNavRow label="Properties" />
+        <p className={`${NAV_GROUP_LABEL} ${BRAND_MUTED}`}>CRM</p>
+        <MainNavRow label="Organisations" />
+        <MainNavRow label="Contacts" />
+        <MainNavRow label="Key contacts" indent />
+        <p className={`${NAV_GROUP_LABEL} ${BRAND_MUTED}`}>Admin</p>
+        <MainNavRow label="Settings" />
+        <MainNavRow label="Audit log" soon />
+      </nav>
+      <div className={`shrink-0 border-t ${BRAND_BORDER} p-panelgap`}>
+        <div className={`${NAV_USER} px-2`}>
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/12 text-xs font-semibold text-white">JM</div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-medium text-white/90">Joe Millson</p>
+            <p className={`truncate text-xs ${BRAND_MUTED}`}>GBRM</p>
+          </div>
+        </div>
+      </div>
+      <button className={`${NAV_COLLAPSE} shrink-0 border-t ${BRAND_BORDER} ${BRAND_IDLE}`}>
+        <PanelLeftClose className={NAV_ICON} /> Collapse
+      </button>
+    </div>
+  );
+}
+
+/** MainNav, collapsed — the one w-12 rail. */
+function MainNavCollapsedSpecimen() {
+  return (
+    <div className={`flex h-[30rem] w-12 shrink-0 flex-col ${SURFACE_NAV}`}>
+      <div className={`flex ${HEADER_H} shrink-0 items-center justify-center border-b ${BRAND_BORDER}`}>
+        <div className="h-7 w-7 shrink-0 rounded-md bg-black/25" />
+      </div>
+      <nav className={`flex min-h-0 flex-1 flex-col gap-panelgap overflow-y-auto py-panelgap ${NAV_PAD}`}>
+        {/* Row for row, this column matches the expanded nav beside it —
+            same h-6 items, and the group rules take the h-9 the labels had. */}
+        {[true, false, false].map((a, i) => (
+          <div key={i} className={`${NAV_ITEM} shrink-0 justify-center px-0 ${a ? BRAND_ACTIVE : BRAND_IDLE}`}>
+            <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+          </div>
+        ))}
+        <div className={NAV_GROUP_RULE}>
+          <span className={`w-full border-t ${BRAND_BORDER}`} />
+        </div>
+        {[false, false, false].map((_, i) => (
+          <div key={i} className={`${NAV_ITEM} shrink-0 justify-center px-0 ${BRAND_IDLE}`}>
+            <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+          </div>
+        ))}
+        <div className={NAV_GROUP_RULE}>
+          <span className={`w-full border-t ${BRAND_BORDER}`} />
+        </div>
+        {[false, false].map((_, i) => (
+          <div key={i} className={`${NAV_ITEM} shrink-0 justify-center px-0 ${BRAND_IDLE}`}>
+            <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+          </div>
+        ))}
+      </nav>
+      <div className={`shrink-0 border-t ${BRAND_BORDER} p-panelgap`}>
+        <div className={`${NAV_USER} justify-center px-0`}>
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/12 text-xs font-semibold text-white">JM</div>
+        </div>
+      </div>
+      <button className={`${NAV_COLLAPSE} shrink-0 justify-center border-t !px-0 ${BRAND_BORDER} ${BRAND_IDLE}`}>
+        <PanelLeftOpen className={NAV_ICON} />
+      </button>
+    </div>
+  );
+}
+
+/** PanelNav → NavGroupLabel. h-9, full-bleed borders (-mx-panelgap cancels
+ *  NAV_PAD). Lands on L8's 12px, the same line as the main nav's. */
 function NavGroupLabel({ label, first }: { label: string; first?: boolean }) {
   return (
-    <p className={`-mx-2 flex h-9 shrink-0 items-center border-neutral-200 px-4 text-xs font-semibold tracking-wide text-black uppercase ${first ? "-mt-2 border-b" : "border-y"}`}>
+    <p className={`-mx-panelgap ${NAV_GROUP_LABEL} border-neutral-200 text-black ${first ? "-mt-2 border-b" : "border-y"}`}>
       {label}
     </p>
   );
 }
 
-/** PanelNav → PanelNavRow. */
+/** PanelNav → PanelNavRow. L8: 24px in, 36px nested. */
 function NavRow({ label, active, soon, badge, indent }: { label: string; active?: boolean; soon?: boolean; badge?: number; indent?: boolean }) {
   return (
     <button
-      className={`${NAV_ITEM} flex w-full shrink-0 items-center justify-between pr-3 text-left ${indent ? "pl-8" : "pl-4"} ${
-        active
-          ? "bg-neutral-200 font-medium text-neutral-900"
-          : soon
-            ? "text-neutral-400 hover:bg-neutral-200/60 hover:text-neutral-600"
-            : "text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-800"
+      className={`${NAV_ITEM} w-full shrink-0 justify-between text-left ${indent ? NAV_ITEM_INSET_NESTED : NAV_ITEM_INSET} ${
+        active ? NAV_ACTIVE : soon ? NAV_MUTED : NAV_IDLE
       }`}
     >
       <span className="truncate">{label}</span>
-      <span className="ml-2 shrink-0 text-xs tabular-nums">
+      <span className="ml-2 shrink-0">
         {soon ? (
           <span className={`${TAG} bg-neutral-200 text-neutral-400`}>Soon</span>
         ) : badge !== undefined ? (
-          <span className={`rounded px-1 text-xs ${active ? "bg-neutral-300 text-neutral-700" : "bg-neutral-200 text-neutral-500"}`}>{badge}</span>
+          <span className={`${NAV_COUNT} ${active ? "text-neutral-500" : ""}`}>{badge}</span>
         ) : null}
       </span>
     </button>
@@ -100,7 +208,7 @@ function NavRow({ label, active, soon, badge, indent }: { label: string; active?
 function PanelNavSpecimen() {
   return (
     <div className={`flex w-48 shrink-0 flex-col border-r border-neutral-200 ${SURFACE_CHROME}`}>
-      <nav className={`flex min-h-0 flex-1 flex-col ${GAP} overflow-y-auto p-2`}>
+      <nav className={`flex min-h-0 flex-1 flex-col ${GAP} overflow-y-auto py-2 ${NAV_PAD}`}>
         <NavGroupLabel label="Record" first />
         <NavRow label="Building info" active />
         <NavRow label="Tenure" />
@@ -109,11 +217,22 @@ function PanelNavSpecimen() {
         <NavRow label="Rent reviews" indent badge={2} />
         <NavRow label="Valuations" soon />
       </nav>
-      <div className="shrink-0 border-t border-neutral-200">
-        <button className={`${NAV_COLLAPSE} text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-800`}>
-          <PanelLeftClose className={NAV_ICON} /> Collapse
-        </button>
-      </div>
+      <button className={`${NAV_COLLAPSE} shrink-0 border-t border-neutral-200 ${NAV_IDLE}`}>
+        <PanelLeftClose className={NAV_ICON} /> Collapse
+      </button>
+    </div>
+  );
+}
+
+/** PanelNav, collapsed — the same h-9 toggle under the same border-t, so it
+ *  sits at exactly the height it does when expanded. */
+function PanelNavCollapsedSpecimen() {
+  return (
+    <div className={`flex w-9 shrink-0 flex-col border-r border-neutral-200 ${SURFACE_CHROME}`}>
+      <div className="min-h-0 flex-1" />
+      <button className={`${NAV_COLLAPSE} shrink-0 justify-center border-t border-neutral-200 !px-0 ${NAV_IDLE}`} title="Expand navigation">
+        <PanelLeftOpen className={NAV_ICON} />
+      </button>
     </div>
   );
 }
@@ -220,9 +339,65 @@ export default function AppComponents() {
         (<span className="font-mono text-[11px]">PanelShell</span> / <span className="font-mono text-[11px]">PanelHeader</span> /{" "}
         <span className="font-mono text-[11px]">PanelLayout</span>), <span className="font-mono text-[11px]">Sheet</span>,{" "}
         <span className="font-mono text-[11px]">FormField</span>, <span className="font-mono text-[11px]">ColourBadge</span>,{" "}
-        <span className="font-mono text-[11px]">Button</span> and <span className="font-mono text-[11px]">Dialog</span>. Re-implementing
+        <span className="font-mono text-[11px]">Button</span> and <span className="font-mono text-[11px]">Dialog</span>.{" "}
+        <span className="font-mono text-[11px]">MainNav</span> joined them in v0.6.0. Re-implementing
         any of them in an app is drift, even if every token inside is correct.
       </CoreRule>
+
+      <Section
+        stack
+        title="MainNav — the app sidebar"
+        note="The last chrome each app was still hand-rolling, and it had drifted: Property Manager's items sat 24px from the edge under a header at 20px, Project Manager's sat at 12px with no indent at all, with 16px vs 8px between groups and 64px vs 48px collapsed rails. Both passed the drift guard, because nothing governed the shape. Apps now pass groups, items and their router's link element — and no spacing at all."
+      >
+        <Anatomy
+          name="MainNav — expanded (w-52) and collapsed (w-12)"
+          rule="L8: the group header sits 12px from the nav's edge, its items 24px, a nested item 36px — items are always INDENTED under their header. Groups are separated by their h-9 header and the ONE 4px gap, never a bigger margin. Soon items sink to the foot of their group. The user panel is always directly above the collapse row, and the collapse row is always last. Collapsing changes the WIDTH only: hold a ruler across the two columns below and every row lines up, because each has a fixed height rather than one derived from its contents — a group label's h-9 becomes a divider of the same h-9, not a thin rule."
+        >
+          <div className={`flex ${GAP} overflow-hidden rounded-lg border border-neutral-300`}>
+            <MainNavSpecimen />
+            <MainNavCollapsedSpecimen />
+            <div className="flex flex-1 items-center p-4 text-xs text-neutral-600">
+              <span>
+                MainNav publishes the live width (13rem expanded, 3rem collapsed) as the CSS variable the panels read,
+                so a detail panel sits flush against the nav in either state. An app that forgot to do this left its
+                panels overlapping the nav — which is the other half of why the sidebar is now a component and not a
+                per-app file.
+              </span>
+            </div>
+          </div>
+        </Anatomy>
+
+        <Anatomy
+          name="BRAND_ACTIVE / BRAND_IDLE / BRAND_MUTED / BRAND_BORDER"
+          rule="The GAP between idle and active is the rule. Property Manager had it right — muted grey idle against a white active row, so the selection reads at a glance. Project Manager's idle was near-white, almost as bright as its active row, so nothing looked selected. These are tokens now, translucent white overlays carrying Property Manager's contrast onto any brand hue: a fixed zinc only lands when the brand happens to be near-black. Note the direction — the main nav is the darkest surface in the app, so its active row LIFTS rather than darkening; everywhere else a selected state goes a shade darker."
+        >
+          <div className="flex flex-col gap-3">
+            <Verdict ok>a clear gap — the active row is white and lifted, idle is muted, on any brand colour</Verdict>
+            <div className={`flex ${GAP}`}>
+              {["#09090b", "#134e4a", "#3f1d38"].map((bg) => (
+                <div key={bg} className="flex flex-1 flex-col gap-panelgap rounded py-panelgap" style={{ backgroundColor: bg }}>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} ${BRAND_ACTIVE}`}>Properties — active</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} ${BRAND_IDLE}`}>Portfolios — idle</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} ${BRAND_IDLE}`}>Contacts — idle</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} ${BRAND_MUTED}`}>Group label — muted</div>
+                </div>
+              ))}
+            </div>
+
+            <Verdict ok={false}>idle almost as bright as active — nothing reads as selected</Verdict>
+            <div className={`flex ${GAP}`}>
+              {["#09090b", "#134e4a", "#3f1d38"].map((bg) => (
+                <div key={bg} className="flex flex-1 flex-col gap-panelgap rounded py-panelgap opacity-90" style={{ backgroundColor: bg }}>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} bg-white/12 font-medium text-white`}>Properties — active</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} text-zinc-200`}>Portfolios — idle</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} text-zinc-200`}>Contacts — idle</div>
+                  <div className={`${NAV_ITEM} ${NAV_ITEM_INSET} text-zinc-500`}>Group label — muted</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Anatomy>
+      </Section>
 
       <Section
         stack
@@ -269,12 +444,10 @@ export default function AppComponents() {
         title="PanelLayout — side nav, sub-header, body"
         note="A record navigates DOWN its own left column, exactly like the main sidebar: same NAV_ITEM geometry, same 'active is a shade darker' rule, same Collapse pinned at the very bottom as a full-bleed h-9 row so both toggles sit level. There are NO horizontal tabs in a record."
       >
-        <Anatomy name="PanelNav — expanded (w-48) and collapsed (w-9)" rule="Group labels are h-9 so they line up with the sub-header bar beside them. The first group drops its top border — the record header's rule already serves. Collapsed, the toggle stays at the bottom so it never moves.">
+        <Anatomy name="PanelNav — expanded (w-48) and collapsed (w-9)" rule="Group labels are h-9 so they line up with the sub-header bar beside them. The first group drops its top border — the record header's rule already serves. Collapsed, the toggle is the SAME full-bleed h-9 row under the SAME border-t, so it sits at exactly the height it does expanded. Same three state tokens as the main nav (NAV_ACTIVE / NAV_IDLE / NAV_MUTED) — only the direction flips, because this surface is light, so the active row goes a shade darker instead of lifting. A trailing count is plain muted numerals (NAV_COUNT), never a filled pill: at pill grey it looked exactly like the active row's background, so an idle row read as selected.">
           <div className="flex h-72 items-stretch gap-6">
             <PanelNavSpecimen />
-            <div className={`flex w-9 shrink-0 flex-col items-center justify-end border-r border-neutral-200 p-1 pb-2 ${SURFACE_CHROME}`}>
-              <button className={BTN_ICON_GHOST} title="Expand navigation"><PanelLeftOpen className={NAV_ICON} /></button>
-            </div>
+            <PanelNavCollapsedSpecimen />
             <div className="flex min-w-0 flex-1 flex-col border border-neutral-200">
               <PanelSubHeaderSpecimen />
               <div className="flex-1 overflow-y-auto bg-neutral-100 p-panelgap">

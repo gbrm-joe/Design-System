@@ -4,10 +4,17 @@ import type { ReactNode } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "../utils";
 import {
-  BTN_ICON_GHOST,
+  NAV_ACTIVE,
   NAV_COLLAPSE,
+  NAV_COUNT,
+  NAV_GROUP_LABEL,
   NAV_ICON,
+  NAV_IDLE,
   NAV_ITEM,
+  NAV_ITEM_INSET,
+  NAV_ITEM_INSET_NESTED,
+  NAV_MUTED,
+  NAV_PAD,
   SURFACE_CHROME,
   TAG,
 } from "../design";
@@ -44,13 +51,17 @@ export interface PanelNavGroup {
 }
 
 function NavGroupLabel({ label, first }: { label: string; first?: boolean }) {
-  // Full-bleed faint borders separate groups (-mx-2 cancels the nav's p-2).
-  // h-9 matches the sub-header bar so their edges line up; the first group
-  // drops its top border because the record header's rule already serves.
+  // Full-bleed faint borders separate groups. h-9 matches the sub-header bar
+  // so their edges line up; the first group drops its top border because the
+  // record header's rule already serves. The 12px inset is L8's — shared with
+  // the main nav, so a group header sits on the same line in either nav.
   return (
     <p
       className={cn(
-        "-mx-2 flex h-9 shrink-0 items-center border-neutral-200 px-4 text-xs font-semibold uppercase tracking-wide text-black",
+        NAV_GROUP_LABEL,
+        // -mx-panelgap cancels NAV_PAD so the rules run full-bleed; the label
+        // still lands on L8's 12px.
+        "-mx-panelgap border-neutral-200 text-black",
         first ? "-mt-2 border-b" : "border-y",
       )}
     >
@@ -74,31 +85,24 @@ function PanelNavRow({
       onClick={onSelect}
       className={cn(
         NAV_ITEM,
-        "flex w-full shrink-0 items-center justify-between pr-3 text-left",
-        item.indent ? "pl-8" : "pl-4",
-        active
-          ? "bg-neutral-200 font-medium text-neutral-900"
-          : item.soon
-            ? "text-neutral-400 hover:bg-neutral-200/60 hover:text-neutral-600"
-            : "text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-800",
+        "flex w-full shrink-0 items-center justify-between text-left",
+        // L8 — one step in from the group header; a nested item takes one more.
+        item.indent ? NAV_ITEM_INSET_NESTED : NAV_ITEM_INSET,
+        // The same three states as the main nav, from the same tokens — only
+        // the direction flips, because this surface is light.
+        active ? NAV_ACTIVE : item.soon ? NAV_MUTED : NAV_IDLE,
       )}
     >
       <span className="truncate">{item.label}</span>
-      <span className="ml-2 shrink-0 text-xs tabular-nums">
+      <span className="ml-2 shrink-0">
         {item.soon ? (
           // TAG_COLOR.neutral would vanish on the neutral-100 nav — one shade darker.
           <span className={`${TAG} bg-neutral-200 text-neutral-400`}>Soon</span>
         ) : item.trailing !== undefined ? (
           item.trailing
         ) : item.badge !== undefined ? (
-          <span
-            className={cn(
-              "rounded px-1 text-xs",
-              active
-                ? "bg-neutral-300 text-neutral-700"
-                : "bg-neutral-200 text-neutral-500",
-            )}
-          >
+          // Plain muted numerals, not a filled pill — see NAV_COUNT.
+          <span className={cn(NAV_COUNT, active && "text-neutral-500")}>
             {item.badge}
           </span>
         ) : null}
@@ -122,16 +126,24 @@ export function PanelNav({
 }) {
   if (collapsed) {
     // Collapsed rail — the expand control sits at the BOTTOM, exactly where
-    // Collapse lives when expanded, so the toggle never moves.
+    // Collapse lives when expanded, so the toggle never moves. It is the SAME
+    // full-bleed h-9 row closed by the SAME border-t (L8): it used to be a
+    // square icon button floated above the floor with no rule over it, so the
+    // two states' toggles sat at different heights and only one had a line.
     return (
       <div
-        className={`flex w-9 shrink-0 flex-col items-center justify-end border-r border-neutral-200 p-1 pb-2 ${SURFACE_CHROME}`}
+        className={`flex w-9 shrink-0 flex-col border-r border-neutral-200 ${SURFACE_CHROME}`}
       >
+        <div className="min-h-0 flex-1" />
         <button
           type="button"
           onClick={onToggleCollapsed}
           title="Expand navigation"
-          className={BTN_ICON_GHOST}
+          className={cn(
+            NAV_COLLAPSE,
+            "shrink-0 justify-center border-t border-neutral-200 !px-0",
+            NAV_IDLE,
+          )}
         >
           <PanelLeftOpen className={NAV_ICON} />
         </button>
@@ -143,7 +155,9 @@ export function PanelNav({
     <div
       className={`flex w-48 shrink-0 flex-col border-r border-neutral-200 ${SURFACE_CHROME}`}
     >
-      <nav className="flex min-h-0 flex-1 flex-col gap-panelgap overflow-y-auto p-2">
+      {/* NAV_PAD is the only horizontal padding — 4px, so an active pill
+          clears the edge. Everything else is L8's insets on the row itself. */}
+      <nav className={`flex min-h-0 flex-1 flex-col gap-panelgap overflow-y-auto py-2 ${NAV_PAD}`}>
         {groups.map((g, gi) => (
           <div key={g.label} className="contents">
             <NavGroupLabel label={g.label} first={gi === 0} />
@@ -158,16 +172,15 @@ export function PanelNav({
           </div>
         ))}
       </nav>
-      {/* Collapse — pinned at the very bottom, level with the main nav's. */}
-      <div className="shrink-0 border-t border-neutral-200">
-        <button
-          type="button"
-          onClick={onToggleCollapsed}
-          className={`${NAV_COLLAPSE} text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-800`}
-        >
-          <PanelLeftClose className={NAV_ICON} /> Collapse
-        </button>
-      </div>
+      {/* Collapse — pinned at the very bottom, level with the main nav's, and
+          closed by the same border-t as the collapsed rail's. */}
+      <button
+        type="button"
+        onClick={onToggleCollapsed}
+        className={cn(NAV_COLLAPSE, "shrink-0 border-t border-neutral-200", NAV_IDLE)}
+      >
+        <PanelLeftClose className={NAV_ICON} /> Collapse
+      </button>
     </div>
   );
 }

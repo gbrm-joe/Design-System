@@ -22,7 +22,7 @@ styling locally from here, and never edit an app from this repo.
   machine can see it), the written rule (`DESIGN_SYSTEM.md`), and the
   rendering (`catalogue/`). A change touches all three or it is not done —
   a component with no catalogue page is half-shipped.
-- Layout rules are NUMBERED (`DESIGN_SYSTEM.md` → Layout, L1–L7) and drawn on
+- Layout rules are NUMBERED (`DESIGN_SYSTEM.md` → Layout, L1–L8) and drawn on
   the catalogue's Layout page. Never bury a layout rule in a prose bullet:
   that is how Project Manager shipped a two-column project form.
 - The displayed name is **"Design System"** — never "GBRM Design System".

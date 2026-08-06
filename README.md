@@ -20,7 +20,7 @@ Full rules in `DESIGN_SYSTEM.md`.
 | Components | `src/components/` | The shared structural components — `EntityTable`, the panel stack (`PanelShell`/`PanelHeader`/`PanelStackRenderer`), `Sheet`, `FormField`, `ColourBadge`, `Button`, `Dialog`. Tokens make an element the right *colour and size*; these make a screen the right *shape*. |
 | Theme variables | `css/theme.css` | The Tailwind v4 scale the tokens depend on (panelgap, desk breakpoint, sidebar width). |
 | Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
-| Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, layout (L1–L7), conventions (C1–C8), when each primitive applies. |
+| Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, layout (L1–L8), conventions (C1–C8), when each primitive applies. |
 | Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens, or when a layout or convention rule it can see is broken. |
 
 ## Installing into an app
@@ -73,7 +73,7 @@ four pages:
 |---|---|
 | Tokens | Every class-string primitive, rendered. |
 | Components | The v0.4.0 shared components as whole screens — the record panel, `PanelNav`/sub-header/body, the form block, `EntityTable`'s toolbar and column header, the `FormField` row, `ColourBadge` and `Dialog`. |
-| Layout | The numbered layout rules L1–L7 — where the blocks sit — each drawn right and wrong. |
+| Layout | The numbered layout rules L1–L8 — where the blocks sit — each drawn right and wrong. |
 | Conventions | C1–C8 — how a value is written wherever it appears: alignment, em dashes, currency, dates, negatives, truncation, headings, reach. |
 
 The Components page **reproduces** each component's markup against the same

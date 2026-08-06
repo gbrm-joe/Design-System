@@ -31,12 +31,99 @@ export const BAR_H = "h-9";
  *  bottom border line. */
 export const HEADER_H = "h-12";
 /** Nav items — ONE size for every navigation list, main sidebar and panel
- *  side navs alike: 13px text, slim py-1 rows, 4px (GAP) between items.
+ *  side navs alike: 13px text, a FIXED h-6 row, 4px (GAP) between items.
  *  Colours come from the surface; geometry never varies. Sub side navs inside
- *  detail records are collapsible, like the main nav. */
-export const NAV_ITEM = "rounded py-1 text-[13px] leading-tight transition-colors";
+ *  detail records are collapsible, like the main nav.
+ *
+ *  The height is FIXED, not derived from padding, and that is the point: a
+ *  collapsed row holds only a 12px icon, so a py-1 row shrank to 20px while
+ *  its expanded twin sat at 24px. Rows then failed to line up between the two
+ *  states and the error accumulated down the column, so collapsing the nav
+ *  visibly shifted everything below it (Joe, 2026-08-06). Collapsing changes
+ *  the nav's WIDTH. Nothing moves vertically. */
+export const NAV_ITEM =
+  "flex h-6 items-center rounded text-[13px] leading-tight transition-colors";
 /** Nav item icons — one size everywhere (12px), set here not per-icon. */
 export const NAV_ICON = "h-3 w-3 shrink-0";
+/** The nav's own horizontal padding — the ONE gap (L5), so an active row's
+ *  rounded pill has 4px of breathing room and never collides with the edge. */
+export const NAV_PAD = "px-panelgap";
+/** The ONE nav indent (L8). Measured FROM THE NAV'S EDGE: a group header sits
+ *  at 12px, its items at 24px, a nested item at 36px — items are always
+ *  INDENTED under their header, never flush with it. (The class values below
+ *  are the ROW's own padding; NAV_PAD's 4px makes up the difference.)
+ *  Two apps hand-rolled this and landed on 24px vs 12px with no indent at all
+ *  (Joe, 2026-08-06), which is why the geometry now lives in a token and a
+ *  component rather than in each app's sidebar. */
+export const NAV_GROUP_INSET = "px-2";
+export const NAV_ITEM_INSET = "pl-5 pr-3";
+export const NAV_ITEM_INSET_NESTED = "pl-8 pr-3";
+/** A nav group header. Geometry only; the colour comes from the surface —
+ *  BRAND_MUTED on the main nav, neutral on a panel's. h-9 matches the
+ *  sub-header bar so a main-nav group label and a panel's line up. */
+export const NAV_GROUP_LABEL =
+  `flex h-9 shrink-0 items-center text-xs font-semibold uppercase tracking-wide ${NAV_GROUP_INSET}`;
+/** What a group header becomes when the nav is COLLAPSED: the label can't be
+ *  read at 48px, so it turns into a rule — but it keeps the label's h-9, so
+ *  every row below it stays exactly where it was. A short divider here is why
+ *  the collapsed rail used to drift out of step with the expanded one. */
+export const NAV_GROUP_RULE = "flex h-9 shrink-0 items-center px-2";
+/** The signed-in user row above the collapse control. Fixed height, because
+ *  expanded it holds two lines of text and collapsed it holds only the
+ *  avatar — without this the footer sits at two different heights. */
+export const NAV_USER =
+  "flex h-10 w-full items-center gap-2 rounded transition-colors";
+
+// The main nav wears the unit's BRAND colour (--sidebar-bg), which can be any
+// hue, so its states can't be a fixed zinc — a hard-coded bg-zinc-800 only
+// lands correctly when the brand happens to be near-black. They are
+// translucent white overlays instead, which hold on every brand colour.
+//
+// NOTE the direction. Elsewhere a selected state is a shade DARKER than its
+// surface (neutral-200 on the neutral-100 panel nav). The main nav is the
+// darkest surface in the app, so there is no darker to go to: on near-black,
+// a darker overlay is invisible. It lifts instead. Both apps had already
+// worked this out independently — each used zinc-800 on a zinc-950 nav, a
+// LIGHTER active row — so the values below reproduce that, generalised to any
+// hue. The principle is a step of CONTRAST from the surface: darker on a
+// light nav, lighter on a dark one.
+//
+// The idle/active GAP is the point. Property Manager had it right (zinc-400
+// idle against a near-white active); Project Manager's idle was zinc-200,
+// almost as bright as its active row, so nothing read as selected (Joe,
+// 2026-08-06). These values are Property Manager's, as overlays.
+// The SAME three states, on the light navs (the panel side nav). Only the
+// direction flips — this surface is light, so the active row goes a shade
+// DARKER. The relationship is identical to the brand nav's and it is written
+// once, here, rather than as a class string inside each nav: idle is clearly
+// muted, active is the strongest thing in the column, muted (Soon) is
+// quieter than idle.
+/** Active row on a light nav — a shade darker than the nav, never white. */
+export const NAV_ACTIVE = "bg-neutral-200 font-medium text-neutral-900";
+/** Idle row on a light nav, and its hover. */
+export const NAV_IDLE =
+  "text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900";
+/** Not-yet-built rows on a light nav — quieter again than idle. */
+export const NAV_MUTED = "text-neutral-400";
+/** A trailing count in a nav row (Leases 7). Deliberately NOT COUNT_PILL: a
+ *  filled pill inside a nav row reads as a second control, and at the pill's
+ *  own grey it looks exactly like the ACTIVE row's background — so an idle
+ *  row appeared to be selected (Joe, 2026-08-06). In a nav the count is plain
+ *  muted numerals; the pill form is for table cells and lists, where there is
+ *  no row-level state to compete with. */
+export const NAV_COUNT =
+  "shrink-0 text-[10px] font-semibold leading-none tabular-nums text-neutral-400";
+
+/** Active main-nav row — a step lighter, ≈zinc-800 on a near-black nav. */
+export const BRAND_ACTIVE = "bg-white/12 font-medium text-white";
+/** Idle main-nav row and its hover. The text is CLEARLY muted against the
+ *  active row's white — that gap is what makes a selection legible. */
+export const BRAND_IDLE = "text-white/60 hover:bg-white/6 hover:text-white";
+/** Muted lettering on the brand surface — group labels, Soon, the user's
+ *  sub-line. Quieter again than an idle row: ≈zinc-500. */
+export const BRAND_MUTED = "text-white/45";
+/** Dividers on the brand surface (header band, user panel, collapse row). */
+export const BRAND_BORDER = "border-white/15";
 /** Collapse control — every side nav (main sidebar and panel sub navs) pins
  *  its Collapse at the VERY bottom, below the scrollable list, as a full-bleed
  *  border-t h-9 row (the sub-nav group-header height), so the toggles on both
@@ -44,7 +131,7 @@ export const NAV_ICON = "h-3 w-3 shrink-0";
  *  ABOVE it — the collapse is always the last thing in the column. Geometry
  *  lives here; colours come from the surface. */
 export const NAV_COLLAPSE =
-  "flex h-9 w-full shrink-0 items-center gap-2 px-4 text-[13px] transition-colors";
+  "flex h-9 w-full shrink-0 items-center gap-2 px-3 text-[13px] transition-colors";
 // Text: data and labels are text-xs (12px). text-sm is chrome (titles, nav)
 // only. text-lg is page titles only. Enforced by the primitives below.
 

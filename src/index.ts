@@ -50,3 +50,9 @@ export {
   PanelLayout,
 } from "./components/panel-nav";
 export type { PanelNavItem, PanelNavGroup } from "./components/panel-nav";
+export { MainNav, MainNavUserButton } from "./components/main-nav";
+export type {
+  MainNavItem,
+  MainNavGroup,
+  MainNavUser,
+} from "./components/main-nav";

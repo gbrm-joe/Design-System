@@ -18,6 +18,15 @@ import {
   TAG,
   TAG_COLOR,
   SECTION_LABEL,
+  NAV_ITEM,
+  NAV_PAD,
+  NAV_GROUP_LABEL,
+  NAV_GROUP_INSET,
+  NAV_ITEM_INSET,
+  NAV_ITEM_INSET_NESTED,
+  BRAND_ACTIVE,
+  BRAND_IDLE,
+  BRAND_MUTED,
 } from "../../../src/design";
 import { Section, Anatomy, Verdict, CoreRule } from "../ui";
 
@@ -26,6 +35,32 @@ function Box({ label, className = "", children }: { label?: string; className?: 
   return (
     <div className={`flex items-center justify-center text-center text-[10px] leading-tight text-neutral-500 ${className}`}>
       {children ?? label}
+    </div>
+  );
+}
+
+/** L8 drawn to scale on the brand nav, with the insets called out. `wrong`
+ *  shows the flush version two apps shipped. */
+function NavRuler({ wrong }: { wrong?: boolean }) {
+  const row = (label: string, cls: string, active?: boolean) => (
+    <div
+      className={`${NAV_ITEM} flex items-center ${cls} ${
+        active ? BRAND_ACTIVE : BRAND_IDLE
+      }`}
+    >
+      {label}
+    </div>
+  );
+  return (
+    <div className={`w-52 shrink-0 rounded ${SURFACE_NAV} py-panelgap ${NAV_PAD}`}>
+      <div className="flex flex-col gap-panelgap">
+        <p className={`${NAV_GROUP_LABEL} ${BRAND_MUTED}`}>{wrong ? "CRM · header 12" : "CRM · 12px"}</p>
+        {row(wrong ? "Organisations · 12" : "Organisations · 24px", wrong ? NAV_GROUP_INSET : NAV_ITEM_INSET, true)}
+        {row(wrong ? "Contacts · 12" : "Contacts · 24px", wrong ? NAV_GROUP_INSET : NAV_ITEM_INSET)}
+        {row(wrong ? "Key contacts · 12" : "Key contacts · 36px", wrong ? NAV_GROUP_INSET : NAV_ITEM_INSET_NESTED)}
+        <p className={`${NAV_GROUP_LABEL} ${BRAND_MUTED} ${wrong ? "mt-4" : ""}`}>{wrong ? "ADMIN · +16 margin" : "ADMIN · 12px"}</p>
+        {row(wrong ? "Settings · 12" : "Settings · 24px", wrong ? NAV_GROUP_INSET : NAV_ITEM_INSET)}
+      </div>
     </div>
   );
 }
@@ -200,7 +235,7 @@ export default function AppLayout() {
             <table className="w-full border-collapse text-xs">
               <tbody>
                 {[
-                  ["Main nav", "w-52 (13rem) — --sidebar-w matches it, so a panel sits flush against it"],
+                  ["Main nav", "w-52 expanded, w-12 collapsed — MainNav publishes the live value as --sidebar-w, so a panel sits flush in either state"],
                   ["Panel side nav", "w-48 expanded, w-9 collapsed"],
                   ["Detail panel", "w-3/4; the backdrop starts at left-[var(--sidebar-w)]"],
                   ["Form block", "~w-1/3 of the panel body, pinned left (L1)"],
@@ -216,6 +251,33 @@ export default function AppLayout() {
             </table>
           </div>
         </Rule>
+
+        <Rule
+          n={8}
+          title="Nav items are INDENTED under their group header — 12px, 24px, 36px"
+          note="Measured from the nav's own edge, and it holds in BOTH navs — the main sidebar and a record's PanelNav — so a group label sits on the same line whichever you are looking at. The nav's only horizontal padding is the ONE gap (4px), enough for an active row's rounded pill to clear the edge; every other inset is one number on the row itself, never a nav pad plus a row pad added together."
+        >
+          <div className="flex flex-col gap-3">
+            <Verdict ok>header at 12, items at 24, nested at 36 — and one 4px gap throughout</Verdict>
+            <div className={`flex ${GAP}`}>
+              <NavRuler />
+              <div className="flex-1 self-center text-xs text-neutral-600">
+                Groups are separated by their <span className="font-mono text-[11px]">h-9</span> header and the one gap —
+                the header does the separating, so no group ever carries a bigger margin.
+              </div>
+            </div>
+
+            <Verdict ok={false}>items flush with the header, and each app picking its own inset</Verdict>
+            <div className={`flex ${GAP} opacity-60`}>
+              <NavRuler wrong />
+              <div className="flex-1 self-center text-xs text-neutral-600">
+                What actually shipped: Property Manager at 24px under a header at 20px, Project Manager at 12px with no
+                indent at all — 16px and 8px between groups, 64px and 48px collapsed rails. Every token correct, the
+                shape wrong. That is why this rule is numbered and why the sidebar is now a component.
+              </div>
+            </div>
+          </div>
+        </Rule>
       </Section>
 
       <Section stack title="What the guard can and cannot see">
@@ -228,7 +290,9 @@ export default function AppLayout() {
             <span className="font-mono text-[11px]"> check-design.sh</span>. So does a local re-declaration of any
             component the package ships (<span className="font-mono text-[11px]">EntityTable</span>,{" "}
             <span className="font-mono text-[11px]">PanelNav</span>, <span className="font-mono text-[11px]">FormField</span> …),
-            which is how an app grows its own panel chrome or tab strip in the first place.
+            which is how an app grows its own panel chrome or tab strip in the first place. L8 joins them: a locally
+            declared <span className="font-mono text-[11px]">Sidebar</span> now fails — the main nav is{" "}
+            <span className="font-mono text-[11px]">MainNav</span>.
           </p>
           <div className={`${SECTION_LABEL} mt-2`}>Reviewed by eye</div>
           <p className="text-xs text-neutral-600">
