@@ -17,6 +17,7 @@ Full rules in `DESIGN_SYSTEM.md`.
 | Piece | File | What it is |
 |---|---|---|
 | Tokens | `src/design.ts` | Every styleable primitive as a named class-string constant (BTN, FIELD, TAG, SURFACE_*, …). Apps import and compose these; nobody writes control styling longhand. |
+| Components | `src/components/` | The shared structural components — `EntityTable`, the panel stack (`PanelShell`/`PanelHeader`/`PanelStackRenderer`), `Sheet`, `FormField`, `ColourBadge`, `Button`, `Dialog`. Tokens make an element the right *colour and size*; these make a screen the right *shape*. |
 | Theme variables | `css/theme.css` | The Tailwind v4 scale the tokens depend on (panelgap, desk breakpoint, sidebar width). |
 | Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
 | Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, when each primitive applies. |
@@ -82,11 +83,36 @@ cd catalogue && npm install && npm run dev
 3. Each app upgrades on its own schedule by bumping its pinned tag and
    reviewing the diff. Nothing changes silently across live apps.
 
-## Not in the package (yet)
+## Components — and why they are here now
 
-- **Shared components** (EntityTable, FormField, Sheet, panels) stay in each
-  app. A component is promoted here only once two apps need the identical
-  thing.
+Until v0.4.0 this package shipped tokens only, and shared components stayed in
+each app. That was a mistake in practice: tokens fix an element's colour and
+size, but they cannot fix a screen's **shape**. An app could pass the drift
+guard with every token correctly applied and still have a detail panel with the
+wrong header depth, the wrong body surface and close buttons the system bans —
+because none of that is a class string, it is structure.
+
+The promotion bar is unchanged: a component moves here only once **two apps
+need the identical thing**. `EntityTable`, the panel stack, `Sheet`,
+`FormField`, `ColourBadge`, `Button` and `Dialog` cleared it (Property Manager
+and Project Manager both need them exactly as written), so they now ship from
+one place instead of being copied and left to drift.
+
+Apps consume them the same way as tokens:
+
+```ts
+import { EntityTable, PanelHeader, FormField, BTN } from "@gbrm/design";
+```
+
+The components depend on the app supplying React 19, Next, `@base-ui/react`,
+`lucide-react`, `sonner`, `@tanstack/react-virtual`, `clsx`,
+`tailwind-merge` and `class-variance-authority` — all listed as peer
+dependencies, all already present in a manager app.
+
+## Not in the package
+
 - **The catalogue site** — lives in `catalogue/` (see below), not in the
   installed package.
 - **Fonts and brand colours** — per-app, in each app's own globals.
+- **Anything an app genuinely does alone** — its queries, its Server Actions,
+  its domain components. A second app needing the same thing is what moves it.
