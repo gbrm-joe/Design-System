@@ -64,7 +64,7 @@ check "checkbox accent drift — use CHECKBOX from @/lib/design" "accent-neutral
 check "FormField label cell longhand — use FIELD_ROW_LABEL" "bg-neutral-50 px-3 py-2 text-xs font-medium uppercase"
 check "transparent field input re-declared — import fieldInput from ui/field-controls" "w-full bg-transparent text-xs text-neutral-900 placeholder:text-neutral-300"
 
-# ── Layout rules (DESIGN_SYSTEM.md → Layout, L1–L7) ────────────────────────
+# ── Layout rules (DESIGN_SYSTEM.md → Layout, L1–L8) ────────────────────────
 # L1 — a detail panel's fields sit in ONE column on the LEFT (~w-1/3); the
 # right side carries charts and KPIs. A multi-column grid in a file that
 # renders FormFields is the two-column form the rule exists to stop.
@@ -79,7 +79,13 @@ check "C1 — text-right: nothing is ever right-aligned, in a table, a form, a t
 # (DESIGN_SYSTEM.md → Banned). Catches the record that grows its own tab
 # strip or panel chrome instead of importing PanelLayout.
 check "a shipped component re-declared locally — import it from @gbrm/design" -E \
-  "(function|const) (EntityTable|PanelHeader|PanelNav|PanelSubHeader|PanelBody|PanelLayout|PanelShell|PanelStackRenderer|FormField|ColourBadge)[ (<=]"
+  "(function|const) (EntityTable|MainNav|PanelHeader|PanelNav|PanelSubHeader|PanelBody|PanelLayout|PanelShell|PanelStackRenderer|FormField|ColourBadge)[ (<=]"
+
+# L8 — the main nav is MainNav. A hand-rolled Sidebar is how the two apps ended
+# up with different insets and no indent under their group headers, each still
+# passing every token check (Joe, 2026-08-06).
+check "L8 — hand-rolled main sidebar: import MainNav from @gbrm/design" -E \
+  "(function|const) Sidebar[ (<=]"
 
 if [ "$fail" -eq 0 ]; then
   echo "✓ design guard clean"

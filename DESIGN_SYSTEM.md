@@ -28,7 +28,7 @@ frame — navigation, headers, sub-headers, toolbars — as opposed to content.
 | `CONTROL_H` | 28 px (`h-7`) | The ONE control height — buttons, fields, chips, selects |
 | `BAR_H` | 36 px (`h-9`) | The ONE bar height — table toolbar, column headers, sub-header |
 | `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
-| `NAV_ITEM` | 13 px text, `py-1` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike; active = a shade darker, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
+| `NAV_ITEM` | 13 px text, FIXED `h-6` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike. The height is fixed, not padding-derived, so a collapsed icon-only row is the same height as its expanded twin (L8); active = a step of contrast, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
 | Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
 | Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
 
@@ -42,6 +42,15 @@ lives here). Headers are never white (not editable). Active side-nav items are
 a shade darker than their nav (`neutral-200`), never white — white is for
 controls, not selection states. **The active rule generalises**: any selected
 state (nav item, segmented option) is a shade darker than its surface.
+**One exception, and only one**: the main nav is the darkest surface in the
+app, so it has no darker to go to — a darker overlay on near-black is
+invisible. There the active row LIFTS (`BRAND_ACTIVE`, ≈`zinc-800` on a
+`zinc-950` nav). The principle underneath is a step of CONTRAST from the
+surface: darker on a light nav, lighter on a dark one. **And the idle/active
+GAP is the rule that matters** — an idle item is clearly muted
+(`BRAND_IDLE`) against the active row's white. Project Manager's idle items
+were `zinc-200`, near enough to its active row that nothing read as selected;
+that is why these are tokens now and not per-app numbers.
 **Header borders**: every header band closes with a bottom border (a
 `neutral-200` band gets `border-neutral-300`; a `neutral-100` band gets
 `border-neutral-200`). A header nested inside a record — the Sheet
@@ -83,8 +92,9 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
 ## Composed patterns
 
 **These ship as components (v0.4.0), not just as rules.** Import them from
-`@gbrm/design` — `EntityTable`, `PanelShell`, `PanelHeader`,
-`PanelStackRenderer`, `Sheet`, `FormField`, `ColourBadge`, `Button`, `Dialog`.
+`@gbrm/design` — `EntityTable`, `MainNav`, `PanelShell`, `PanelHeader`,
+`PanelNav`/`PanelLayout`, `PanelStackRenderer`, `Sheet`, `FormField`,
+`ColourBadge`, `Button`, `Dialog`.
 Tokens make an element the right colour and size; these make a screen the right
 SHAPE, which no class string can enforce. Re-implementing any of them in an app
 is drift, even if every token inside is correct.
@@ -101,6 +111,16 @@ is drift, even if every token inside is correct.
   actions / Delete / clear.
 - **KPI tiles** — a band of equal-width `TILE`s with `GAP`, only where a
   section has headline figures; a table does NOT imply a band.
+- **The main nav** — every app's sidebar IS `MainNav` (v0.6.0). Apps pass
+  groups, items and their router's link element; they pass no spacing. It owns
+  the app-name band, L8's indent, the Soon treatment, the wordmark, the user
+  panel, the collapse row and the live `--sidebar-w`. Its states are
+  translucent white overlays (`BRAND_ACTIVE` / `BRAND_IDLE` / `BRAND_MUTED` /
+  `BRAND_BORDER`), not a fixed zinc — the nav wears the unit's brand colour,
+  and a hard-coded `zinc` only lands when that colour happens to be
+  near-black. **The idle row is clearly muted against the active row's white**
+  — that gap is what makes a selection legible, and it is the same gap in
+  every app. A per-app `Sidebar` component is drift and fails the guard.
 - **Detail panels** — full width less the main nav, baked into `Sheet`; body
   `SURFACE_PANEL` with white cards; the outer record band is `HEADER_H` on
   `SURFACE_HEADER` closed with `border-neutral-300`, and the backdrop stops at
@@ -162,11 +182,53 @@ tiles with the one gap, all the same width, grey because they are read-only.
 A table does not imply a band. Figures never split across two rows of tiles,
 and no tile wears its own accent colour.
 
-**L7 — the fixed widths.** Main nav `w-52` (`--sidebar-w` matches it, so a
-panel sits flush against it) · panel side nav `w-48` expanded / `w-9`
-collapsed · detail panel `w-3/4` · form block `~w-1/3` (L1) · FormField label
-cell `w-40` default, narrowed to `w-28` in a tight panel and never wider ·
-table search `w-64`, alone at the right end of the toolbar.
+**L7 — the fixed widths.** Main nav `w-52` expanded / `w-12` collapsed
+(`MainNav` publishes the live value as `--sidebar-w`, so a panel sits flush in
+either state) · panel side nav `w-48` expanded / `w-9` collapsed · detail
+panel `w-3/4` · form block `~w-1/3` (L1) · FormField label cell `w-40`
+default, narrowed to `w-28` in a tight panel and never wider · table search
+`w-64`, alone at the right end of the toolbar.
+
+**L8 — nav items are INDENTED under their group header. 12px, 24px, 36px.**
+Measured from the nav's own edge: a group header sits at 12px, its items at
+24px, a nested item at 36px. This holds in BOTH navs — the main sidebar and a
+record's `PanelNav` — so a group label sits on the same line whichever you are
+looking at. The nav's only horizontal padding is the ONE gap (4px), enough for
+an active row's rounded pill to clear the edge; every other inset is one
+number on the row itself, never a nav pad plus a row pad added together.
+Groups are separated by their `h-9` header and the one 4px gap — never by a
+bigger margin.
+
+**Both navs obey the same state rule, from the same tokens.** `NAV_ACTIVE` /
+`NAV_IDLE` / `NAV_MUTED` on a light nav, `BRAND_ACTIVE` / `BRAND_IDLE` /
+`BRAND_MUTED` on the brand nav. Only the direction flips (a light surface
+darkens, the darkest surface lifts); the relationship is identical — idle is
+clearly muted, active is the strongest thing in the column, Soon is quieter
+again. Never write these as class strings inside a nav.
+
+**A count in a nav row is plain muted numerals** (`NAV_COUNT`), never a filled
+pill. `COUNT_PILL`'s grey is the same grey as an active row's background, so
+an idle row wearing one read as selected, and at `text-xs` the number competed
+with the label. The pill form belongs in table cells and lists, where there is
+no row-level state to collide with.
+
+**Collapsing a nav changes its WIDTH. Nothing moves vertically.** Every row
+holds a fixed height that does not depend on what is inside it: `NAV_ITEM` is
+`h-6` whether it carries a label or a bare 12px icon, the user row is
+`NAV_USER` (`h-10`) whether it shows two lines or just an avatar, and a group
+label's `h-9` is taken over by `NAV_GROUP_RULE` — a divider of the same
+height — when the label becomes unreadable at 48px. Size a nav row from its
+padding and the collapsed rail comes out shorter row by row, the error
+accumulates down the column, and the whole footer lands somewhere else (Joe,
+2026-08-06). The collapse toggle is the same full-bleed `h-9` row closed by the
+same `border-t` in BOTH states of BOTH navs — never a bordered row in one and a
+floating icon button in the other, which is what `PanelNav` had. Put the
+expanded and collapsed navs side by side: every row must line up.
+
+*Why numbered*: Property Manager shipped items at 24px under a header at 20px,
+Project Manager shipped both at 12px with no indent at all, and both passed the
+drift guard because nothing governed the shape (Joe, 2026-08-06). *Guarded*: a
+locally declared `Sidebar` component fails the check — import `MainNav`.
 
 ## Graphics and dashboards
 
@@ -254,8 +316,11 @@ posture — the page is for reading, not editing.
 ## Banned
 
 - Close / prev / next buttons in any header (Delete is the only header square).
-- A local copy of anything the package ships — a per-app table, panel header,
-  panel stack, sheet, form-field row or badge. Import it or it is drift.
+- A local copy of anything the package ships — a per-app table, **sidebar**,
+  panel header, panel stack, sheet, form-field row or badge. Import it or it
+  is drift.
+- **Nav items flush with their group header** — items are always indented
+  under it (L8), and the nav's insets never vary between apps.
 - **Two columns of FormFields** (`grid-cols-2` and friends) — L1.
 - **A horizontal tab strip inside a record** — records navigate down the side
   nav (L3).

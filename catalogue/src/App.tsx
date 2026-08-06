@@ -14,6 +14,9 @@ import {
   NAV_ITEM,
   NAV_ICON,
   NAV_COLLAPSE,
+  NAV_PAD,
+  NAV_ITEM_INSET,
+  NAV_ITEM_INSET_NESTED,
   SURFACE_HEADER,
   SURFACE_CHROME,
 } from "../../src/design";
@@ -64,7 +67,7 @@ export default function App() {
         <aside
           className={`${SURFACE_CHROME} sticky top-12 flex h-[calc(100vh-3rem)] shrink-0 flex-col border-r border-neutral-200 ${collapsed ? "w-12" : "w-52"}`}
         >
-          <nav className={`flex flex-1 flex-col ${GAP} overflow-y-auto p-2`}>
+          <nav className={`flex flex-1 flex-col ${GAP} overflow-y-auto py-2 ${NAV_PAD}`}>
             {PAGES.map((p) => {
               // Collapsed, only the three system icons show — sub-pages have
               // no icon of their own and would read as unlabelled rows.
@@ -81,7 +84,7 @@ export default function App() {
                   key={p.key}
                   onClick={() => setActive(p.key === "app" ? "app/tokens" : p.key)}
                   aria-label={p.label}
-                  className={`${NAV_ITEM} flex items-center gap-2 text-left ${isSection ? "px-2" : "pr-3 pl-8"} ${
+                  className={`${NAV_ITEM} flex items-center gap-2 text-left ${collapsed ? "px-0" : isSection ? NAV_ITEM_INSET : NAV_ITEM_INSET_NESTED} ${
                     selected
                       ? "bg-neutral-200 font-medium text-neutral-900"
                       : sectionOpen
