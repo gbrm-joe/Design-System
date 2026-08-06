@@ -81,8 +81,15 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
 
 ## Composed patterns
 
-- **Tables** — every list of records renders through `EntityTable`
-  (`components/shared/entity-table.tsx`); never hand-roll a `<table>`. Its
+**These ship as components (v0.4.0), not just as rules.** Import them from
+`@gbrm/design` — `EntityTable`, `PanelShell`, `PanelHeader`,
+`PanelStackRenderer`, `Sheet`, `FormField`, `ColourBadge`, `Button`, `Dialog`.
+Tokens make an element the right colour and size; these make a screen the right
+SHAPE, which no class string can enforce. Re-implementing any of them in an app
+is drift, even if every token inside is correct.
+
+- **Tables** — every list of records renders through `EntityTable`; never
+  hand-roll a `<table>`, and never keep a local table component beside it. Its
   toolbar is table chrome: an h-9 bar above the h-9 column header row, one
   fixed order on every table — **add action first (top-left) → other actions →
   Views → Columns → filters/toggles → search alone at the right**. The order
@@ -94,8 +101,10 @@ FIELD, so dialog fields look like every other field. `DialogTitle` is
 - **KPI tiles** — a band of equal-width `TILE`s with `GAP`, only where a
   section has headline figures; a table does NOT imply a band.
 - **Detail panels** — full width less the main nav, baked into `Sheet`; body
-  `SURFACE_PANEL` with white cards; header via `PanelHeader`
-  (`components/panels/panel-header.tsx`); field rows via the shared
+  `SURFACE_PANEL` with white cards; the outer record band is `HEADER_H` on
+  `SURFACE_HEADER` closed with `border-neutral-300`, and the backdrop stops at
+  the main nav (`left-[var(--sidebar-w)]`) so the nav stays live behind an open
+  panel; header via `PanelHeader`; field rows via the shared
   `FormField` (grey `bg-neutral-50` label cell + white value cell). Never
   hand-roll a panel header or a local FormField. **A record opened from a
   table always breadcrumbs back to it** — `Parent › Record` in the panel
@@ -189,6 +198,8 @@ posture — the page is for reading, not editing.
 ## Banned
 
 - Close / prev / next buttons in any header (Delete is the only header square).
+- A local copy of anything the package ships — a per-app table, panel header,
+  panel stack, sheet, form-field row or badge. Import it or it is drift.
 - `text-[11px]` (retired 2026-08-04) — data/labels are `text-xs`.
 - Hand-rolled control styling (any button/field class written longhand).
 - Dark-fill buttons anywhere (`bg-neutral-900` fills).

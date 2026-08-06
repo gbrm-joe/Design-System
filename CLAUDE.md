@@ -27,8 +27,12 @@ styling locally from here, and never edit an app from this repo.
   (2026-08-05). Never re-order it or swap a hue without re-running a
   colour-blindness validation and recording the result in the commit message.
 - No shared React components in the package until two apps need the IDENTICAL
-  thing. Composed patterns are documented in the rulebook, implemented per
-  app.
+  thing. That bar was cleared in v0.4.0 by `EntityTable`, the panel stack,
+  `Sheet`, `FormField`, `ColourBadge`, `Button` and `Dialog` — they now ship
+  from `src/components/`. Anything else stays per-app until a second app needs
+  it verbatim. Tokens govern colour and size; components govern SHAPE — an app
+  can pass the drift guard and still be structurally wrong, which is exactly
+  why the components moved here.
 - The catalogue stays dependency-free beyond Vite/React/Tailwind: inline SVG
   icons, no chart or UI libraries. It follows the system's own rules — it is
   the first consumer.

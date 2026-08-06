@@ -1,16 +1,16 @@
 {
   "name": "@gbrm/design",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "license": "UNLICENSED",
-  "description": "Design System — tokens, theme variables, rulebook and drift guard shared across the manager apps.",
+  "description": "Design System — tokens, shared components, theme variables, rulebook and drift guard shared across the manager apps.",
   "type": "module",
-  "main": "./dist/design.js",
-  "types": "./dist/design.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/design.d.ts",
-      "default": "./dist/design.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./theme.css": "./css/theme.css",
     "./print.css": "./css/print.css"
@@ -26,7 +26,31 @@
     "prepare": "npm run build",
     "dev": "npm run dev --prefix catalogue"
   },
+  "peerDependencies": {
+    "@base-ui/react": ">=1.4.0",
+    "@tanstack/react-virtual": ">=3.14.0",
+    "class-variance-authority": ">=0.7.0",
+    "clsx": ">=2.1.0",
+    "lucide-react": ">=1.8.0",
+    "next": ">=15",
+    "react": ">=19",
+    "react-dom": ">=19",
+    "sonner": ">=2.0.0",
+    "tailwind-merge": ">=3.5.0"
+  },
   "devDependencies": {
+    "@base-ui/react": "^1.4.1",
+    "@tanstack/react-virtual": "^3.14.4",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "next": "^16",
+    "react": "^19",
+    "react-dom": "^19",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0",
     "typescript": "^5"
   }
 }
