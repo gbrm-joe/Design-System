@@ -38,9 +38,18 @@ styling locally from here, and never edit an app from this repo.
   it verbatim. Tokens govern colour and size; components govern SHAPE — an app
   can pass the drift guard and still be structurally wrong, which is exactly
   why the components moved here.
-- The catalogue stays dependency-free beyond Vite/React/Tailwind: inline SVG
-  icons, no chart or UI libraries. It follows the system's own rules — it is
-  the first consumer.
+- The catalogue's DOCUMENTATION pages (Tokens, Components, Layout,
+  Conventions) stay dependency-free beyond Vite/React/Tailwind: inline SVG
+  icons, no chart or UI libraries. They reproduce the components against the
+  tokens rather than importing them.
+- The catalogue's SANDBOX does the opposite, deliberately (Joe, 2026-08-16):
+  it imports the REAL components from `src/` and therefore carries the
+  package's peer deps. That is the point — a reproduction can look perfect
+  while the component apps install is wrong, which is how a page title shipped
+  4px from the sidebar. **A change to a component is not reviewed until it has
+  been looked at in the sandbox**, not just on the Components page. Where the
+  two disagree, the sandbox is right and the documentation page is stale.
+  Plan and findings: `docs/plans/sandbox.md`.
 - TypeScript strict. Ask before adding any dependency.
 
 ## Workflow

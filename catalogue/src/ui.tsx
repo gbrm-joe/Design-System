@@ -1,7 +1,7 @@
 // Shared catalogue chrome: the specimen wrapper, the section card, the one
 // chart and the inline icon set. The apps use lucide and a chart library; the
 // catalogue stays dependency-free.
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   SURFACE_CARD,
   CARD_HEADER,
@@ -59,6 +59,10 @@ export const PanelLeftClose = ({ className }: { className?: string }) => (
 );
 export const PanelLeftOpen = ({ className }: { className?: string }) => (
   <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18m4-11 3 2-3 2" /></svg>
+);
+
+export const Play = ({ className }: { className?: string }) => (
+  <svg className={className ?? icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 3 14 9-14 9V3z" /></svg>
 );
 
 /** One specimen: the rendered element with its token name underneath. */
@@ -141,8 +145,18 @@ export function GroupedBarChart({
     return () => ro.disconnect();
   }, []);
 
-  // Geometry in real pixels. 46px gutter holds the widest y label at 12px.
-  const left = 46;
+  // Geometry in real pixels. The y gutter is MEASURED from the widest label
+  // actually being drawn, not assumed: it was hard-coded at 46px, which fits
+  // "40,000" but not "£40,000" (48px at 12px), so every currency axis silently
+  // lost its £ off the left edge — found in the sandbox, 2026-08-16. Same
+  // principle as drawing the plot at 1:1: measure the real thing.
+  const left = useMemo(() => {
+    const c = document.createElement("canvas").getContext("2d");
+    if (!c) return 46;
+    c.font = "12px system-ui, -apple-system, sans-serif";
+    const widest = Math.max(...ticks.map((v) => c.measureText(fmt(v)).width));
+    return Math.ceil(widest) + 12; // 8px from the gridline, 4px of margin
+  }, [ticks, fmt]);
   const top = 8;
   const bottom = height - 22; // the x-label line sits under the baseline
   const plotW = Math.max(0, w - left - 4);

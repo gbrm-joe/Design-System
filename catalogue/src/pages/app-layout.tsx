@@ -12,7 +12,9 @@ import {
   SURFACE_CHROME,
   SURFACE_BAR,
   SURFACE_CARD,
+  SURFACE_CARD_MUTED,
   SURFACE_NAV,
+  HEADER_PAD,
   CARD_HEADER,
   TILE,
   TAG,
@@ -61,6 +63,34 @@ function NavRuler({ wrong }: { wrong?: boolean }) {
         <p className={`${NAV_GROUP_LABEL} ${BRAND_MUTED} ${wrong ? "mt-4" : ""}`}>{wrong ? "ADMIN · +16 margin" : "ADMIN · 12px"}</p>
         {row(wrong ? "Settings · 12" : "Settings · 24px", wrong ? NAV_GROUP_INSET : NAV_ITEM_INSET)}
       </div>
+    </div>
+  );
+}
+
+/** L2's band inset, drawn at TRUE horizontal scale: a real h-12 band over a
+ *  real p-panelgap content area holding a real px-3 column header. The dotted
+ *  line marks where the title SHOULD land — on the first column header under
+ *  it. Right, that line runs through both; wrong, the title is 12px left of
+ *  everything and lines up with nothing. */
+function BandRuler({ pad, wrong }: { pad: string; wrong?: boolean }) {
+  return (
+    <div className={`relative overflow-hidden rounded-lg border border-neutral-300 ${wrong ? "opacity-70" : ""}`}>
+      <div className={`flex h-12 items-center border-b border-neutral-300 ${SURFACE_HEADER} ${pad}`}>
+        <span className="text-sm leading-none font-semibold text-neutral-900">Projects</span>
+      </div>
+      <div className={`${SURFACE_CHROME} p-panelgap`}>
+        <div className={`${SURFACE_CARD_MUTED}`}>
+          <div className={`flex h-9 items-center border-b border-neutral-200 ${SURFACE_BAR} px-3`}>
+            <span className={`${TAG} ${TAG_COLOR.neutral}`}>toolbar</span>
+          </div>
+          <div className={`flex h-9 items-center border-b border-neutral-200 ${SURFACE_BAR} px-3 text-xs font-medium tracking-wide text-neutral-500 uppercase`}>
+            Job ref
+          </div>
+          <div className="flex h-9 items-center bg-white px-3 text-xs text-neutral-900 tabular-nums">3082</div>
+        </div>
+      </div>
+      {/* 16px from the frame edge: 4px page inset + the card's own 12px. */}
+      <span className="pointer-events-none absolute inset-y-0 left-4 border-l border-dashed border-blue-500/70" />
     </div>
   );
 }
@@ -159,7 +189,7 @@ export default function AppLayout() {
           <div className="flex h-56 overflow-hidden rounded-lg border border-neutral-300">
             <Box label="Main nav w-52 · SURFACE_NAV" className={`${SURFACE_NAV} w-32 shrink-0 px-2 text-neutral-400`} />
             <div className="flex min-w-0 flex-1 flex-col">
-              <Box label="h-12 title band · SURFACE_HEADER · one centred text-sm line, closed border-neutral-300" className={`${SURFACE_HEADER} h-12 shrink-0 border-b border-neutral-300 px-3`} />
+              <Box label="h-12 title band · PAGE_HEADER · one centred text-sm line, closed border-neutral-300" className={`${SURFACE_HEADER} h-12 shrink-0 border-b border-neutral-300 ${HEADER_PAD}`} />
               <div className={`flex flex-1 flex-col ${GAP} ${SURFACE_CHROME} p-panelgap`}>
                 <div className={`flex ${GAP}`}>{[0, 1, 2, 3].map((i) => <Box key={i} label="TILE" className={`${TILE} h-10 flex-1`} />)}</div>
                 <Box label="SURFACE_CARD — data lives here" className={`${SURFACE_CARD} flex-1`} />
@@ -168,11 +198,29 @@ export default function AppLayout() {
           </div>
         </Rule>
 
+        {/* Drawn at TRUE horizontal scale — the sketches above are schematic, and
+            a schematic cannot show a 12px error. This one can: the band's inset
+            and the column header's inset are real pixels, so the title either
+            lands on the header text below it or it doesn't. */}
+        <Rule
+          n={2}
+          title="The band's inset is HEADER_PAD (16px) — the title lines up with the data below it"
+          note="Not a taste call: content is inset by the ONE gap (4px) and a card's own text sits 12px inside that, so 16px puts the page title on the same vertical line as the first column header beneath it. The 4px page inset is for content, not for the band — at 4px the title reads as jammed against the nav under 14px of air above and below."
+        >
+          <div className="flex flex-col gap-3">
+            <Verdict ok>HEADER_PAD — "Projects" sits directly over "JOB REF"</Verdict>
+            <BandRuler pad={HEADER_PAD} />
+
+            <Verdict ok={false}>px-panelgap — the page inset used on the band; the title aligns with nothing</Verdict>
+            <BandRuler pad="px-panelgap" wrong />
+          </div>
+        </Rule>
+
         <Rule n={3} title="A record: h-12 header band · side nav left · h-9 sub-header · body" note="Records navigate DOWN a side nav. Horizontal tabs are banned — a tab strip is a different navigation model and reads as a different application. The panel is w-3/4 and the backdrop stops at the main nav, so the nav stays live behind an open record.">
           <div className="flex h-56 overflow-hidden rounded-lg border border-neutral-300">
             <Box label="Main nav (still live)" className={`${SURFACE_NAV} w-16 shrink-0 text-neutral-500`} />
             <div className="flex min-w-0 flex-1 flex-col border-l border-neutral-300">
-              <Box label="h-12 record band · breadcrumb Parent › Record · Delete is the only header square" className={`${SURFACE_HEADER} h-12 shrink-0 border-b border-neutral-300 px-3`} />
+              <Box label="h-12 record band · breadcrumb Parent › Record · Delete is the only header square" className={`${SURFACE_HEADER} h-12 shrink-0 border-b border-neutral-300 ${HEADER_PAD}`} />
               <div className="flex min-h-0 flex-1">
                 <Box label="PanelNav w-48" className={`${SURFACE_CHROME} w-28 shrink-0 border-r border-neutral-200`} />
                 <div className="flex min-w-0 flex-1 flex-col">

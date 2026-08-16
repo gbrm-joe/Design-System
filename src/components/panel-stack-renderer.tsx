@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { HEADER_H, SURFACE_HEADER, BREADCRUMB_PARENT, BREADCRUMB_SEP } from "../design";
+import { HEADER_H, HEADER_PAD, SURFACE_HEADER, BREADCRUMB_PARENT, BREADCRUMB_SEP } from "../design";
 import { usePanelStack } from "./panel-stack-provider";
 
 // ---------------------------------------------------------------------------
@@ -90,9 +90,9 @@ export function PanelStackRenderer() {
                 matching the sidebar app-name band: ONE centred leading-none
                 line holding the breadcrumb INLINE before the title, so
                 nothing crowds the top edge and the title sits level with the
-                app name. px-4: content sits level with the side nav group
-                headers. ── */}
-            <div className={`flex ${HEADER_H} shrink-0 items-center justify-between border-b border-neutral-300 ${SURFACE_HEADER} px-4`}>
+                app name. HEADER_PAD: the ONE band inset, so the title lands on
+                the same vertical line as the data below it. ── */}
+            <div className={`flex ${HEADER_H} shrink-0 items-center justify-between border-b border-neutral-300 ${SURFACE_HEADER} ${HEADER_PAD}`}>
               {/* ONE breadcrumb style app-wide (Joe, 2026-08-04): muted
                   clickable parent › ChevronRight › dark title — matching
                   PanelHeader; no slashes, no arrows. */}

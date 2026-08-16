@@ -81,6 +81,21 @@ Full rules in `DESIGN_SYSTEM.md`.
 rendering: if an app screen doesn't match the catalogue, the screen is wrong.
 Review every design change here before tagging a release.
 
+Below the page list sits the **Sandbox** — a working demo app (nav, pages,
+tables, records, dialogs, dummy data) built from the REAL components in
+`src/`, at full size, on the whole viewport. The pages above document the
+system; the sandbox is the only place you can see whether a screen is actually
+right. It exists because none of the documentation pages could have caught a
+page title sitting 4px from the sidebar: tokens are drawn alone, components as
+specimens, and the Layout page is schematics at reduced scale — a schematic
+cannot show a 12px error. Its devtools strip toggles a measure overlay (the
+insets and alignment lines the rules name, drawn over the live screen), the
+nav's collapsed state, and the brand colour.
+
+Because it imports the real components it carries the package's peer
+dependencies; the four documentation pages stay dependency-free and keep
+reproducing components by hand. See `docs/plans/sandbox.md`.
+
 Its sidebar switches media (Application · Print · Website); **Application** has
 four pages:
 

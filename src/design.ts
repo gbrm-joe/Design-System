@@ -30,6 +30,17 @@ export const BAR_H = "h-9";
  *  app name and the content below starts exactly on the sidebar header's
  *  bottom border line. */
 export const HEADER_H = "h-12";
+/** The ONE horizontal inset for a HEADER_H band: 16px. The arithmetic IS the
+ *  rule — content below a band is inset by the one gap (4px, L5) and a card's
+ *  own text sits 12px inside that, so 16px puts a band's title on the exact
+ *  vertical line as the first value beneath it. Every band uses it: the
+ *  page-title band, the record header, PanelHeader.
+ *
+ *  Nothing said this before, so Project Manager gave its page title the 4px
+ *  page inset — the title jammed against the nav under 14px of air above and
+ *  below, aligned with nothing (Joe, 2026-08-16). A band's height and its
+ *  inset are one decision; they now live in one place. */
+export const HEADER_PAD = "px-4";
 /** Nav items — ONE size for every navigation list, main sidebar and panel
  *  side navs alike: 13px text, a FIXED h-6 row, 4px (GAP) between items.
  *  Colours come from the surface; geometry never varies. Sub side navs inside
@@ -282,6 +293,19 @@ export const SURFACE_NAV = "bg-[var(--sidebar-bg,#09090b)]";
 /** Top header bands — the record header and Sheet panel header. One step
  *  darker than the side nav beneath them. */
 export const SURFACE_HEADER = "bg-neutral-200";
+
+/** THE page-title band (L2). Every page in every app opens with this and
+ *  nothing else: one h-12 grey band, one centred text-sm line, closed with a
+ *  bottom border, inset by HEADER_PAD — title (or breadcrumb) left, page
+ *  actions right. Composed here rather than left to each app, because the band
+ *  is the one piece of page chrome no shipped component owned: an app could
+ *  import MainNav, EntityTable and the panel stack, pass every token check,
+ *  and still put its page title 4px from the nav. */
+export const PAGE_HEADER =
+  "flex h-12 shrink-0 items-center justify-between gap-2 border-b border-neutral-300 bg-neutral-200 px-4";
+/** The page title itself — ONE line, text-sm, level with the app name in the
+ *  nav band beside it. Never a hero size, never with a subtitle under it. */
+export const PAGE_TITLE = "min-w-0 truncate text-sm font-semibold leading-none text-neutral-900";
 /** Panel chrome: the panel's side nav and sub-header — one step lighter than
  *  the header band above. Its dividers use border-neutral-200. */
 export const SURFACE_CHROME = "bg-neutral-100";

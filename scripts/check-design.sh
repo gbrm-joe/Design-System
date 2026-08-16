@@ -71,6 +71,14 @@ check "transparent field input re-declared — import fieldInput from ui/field-c
 check_pair "L1 — FormFields in a multi-column grid: fields are ONE column, on the left (~w-1/3); charts/KPIs go right" \
   "<FormField" "grid-cols-[2-9]"
 
+# L2 — the page-title band is inset by HEADER_PAD (16px), not the 4px page
+# inset. Both classes on ONE class string, so this only fires on a real band.
+# Project Manager's title sat 4px from the sidebar with every token correct
+# (Joe, 2026-08-16) — the band and its inset are one decision, so import
+# PAGE_HEADER instead of assembling it.
+check "L2 — h-12 band inset too tight: use PAGE_HEADER / HEADER_PAD (16px), not the 4px page inset" -E \
+  "h-12[^\"\`]*\bpx-(panelgap|0|1|2|3)\b|px-(panelgap|0|1|2|3)\b[^\"\`]*h-12"
+
 # C1 — everything is left-aligned (Joe, 2026-08-06). Figures keep tabular-nums;
 # the alignment goes. Covers responsive variants (md:text-right) too.
 check "C1 — text-right: nothing is ever right-aligned, in a table, a form, a tile or a report" "text-right"
