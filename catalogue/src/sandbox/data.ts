@@ -131,6 +131,91 @@ export const PROJECTS: Project[] = Array.from({ length: 74 }, (_, i) => {
   };
 });
 
+// ── Tasks ──────────────────────────────────────────────────────────────────
+// A second entity, on purpose: one table can be right by accident. This one
+// carries the cases the projects table doesn't — a completed flag behind a
+// toolbar TOGGLE (which must sit in `filters`, never between the action
+// buttons), a countable column for the totals footer, and days-overdue, where
+// the negative is a count rather than money.
+
+export interface Task {
+  id: number;
+  ref: string;
+  title: string;
+  project: string;
+  assignee: string | null;
+  status: TaskStatus;
+  due: string | null;
+  /** Negative = overdue by that many days. Null = nothing due. */
+  daysLeft: number | null;
+  hours: number;
+  done: boolean;
+}
+
+export type TaskStatus = "To do" | "In progress" | "Blocked" | "Done";
+
+export const TASK_TONE: Record<TaskStatus, BadgeTone> = {
+  "To do": "neutral",
+  "In progress": "blue",
+  Blocked: "red",
+  Done: "green",
+};
+
+const TASK_TITLES = [
+  "Measure survey — first floor",
+  "Draft schedule of condition",
+  "Chase client for access",
+  "Issue fee note",
+  "Review contractor quote",
+  "Site visit — roof",
+  "Prepare dilapidations response and supporting photographic schedule for the tenant's surveyor",
+  "Update programme",
+  "Check party wall notices",
+  "Close out snagging list",
+];
+
+const TASK_STATUSES: TaskStatus[] = [
+  "To do",
+  "In progress",
+  "In progress",
+  "Blocked",
+  "Done",
+  "Done",
+];
+
+/** The fixture's "today". Fixed, not `new Date()` — a sandbox whose figures
+ *  drift with the clock is useless for comparing two screenshots. */
+const TODAY = new Date("2026-08-17T00:00:00Z");
+
+function dueDate(daysLeft: number): string {
+  const d = new Date(TODAY.getTime() + daysLeft * 86400000);
+  return d.toISOString().slice(0, 10);
+}
+
+export const TASKS: Task[] = Array.from({ length: 46 }, (_, i) => {
+  const status = TASK_STATUSES[Math.floor(seeded(i, 11) * TASK_STATUSES.length)];
+  const done = status === "Done";
+  // Roughly a third are overdue, so the red minus is visible in a real column.
+  const daysLeft = done ? null : Math.round((seeded(i, 12) - 0.35) * 40);
+  return {
+    id: 8000 + i * 2,
+    ref: `T-${1200 + i * 3}`,
+    title: TASK_TITLES[i % TASK_TITLES.length],
+    project: NAMES[i % NAMES.length],
+    // C2 — unassigned is absent, not "None".
+    assignee: seeded(i, 13) > 0.85 ? null : SURVEYORS[i % SURVEYORS.length],
+    status,
+    // The date and the countdown are the SAME fact written two ways, so they
+    // are derived from one number. Two independently random columns that
+    // contradict each other is the kind of fixture that trains people to stop
+    // reading the screen.
+    due: daysLeft == null ? null : dueDate(daysLeft),
+    daysLeft,
+    hours: Math.round(seeded(i, 14) * 16),
+    done,
+  };
+});
+
 // ── Conventions, applied ───────────────────────────────────────────────────
 // These live here rather than in each page: how a value is WRITTEN is C1–C8,
 // and a sandbox that formats its figures three different ways is not a

@@ -18,6 +18,13 @@ function seeded(i: number, salt: number) {
   return x - Math.floor(x);
 }
 
+/** The plot's real drawn height, exported so a loading or empty state can hold
+ *  exactly the same space and the card never resizes when the data lands.
+ *  NOTE (2026-08-17): the rulebook says "one plot height: CHART_HEIGHT" (h-64,
+ *  256px) and this chart draws at 172. One of the two is wrong — logged in
+ *  docs/plans/sandbox.md; it is a design call, not a typo to quietly fix. */
+export const PLOT_H = 172;
+
 export function ProfitChart({ seed }: { seed: number }) {
   const data = MONTHS.map((label, i) => ({
     label,
@@ -31,6 +38,7 @@ export function ProfitChart({ seed }: { seed: number }) {
       ticks={[0, 10000, 20000, 30000, 40000]}
       fmt={(v) => currency(v)}
       series={["Fees", "Costs"]}
+      height={PLOT_H}
     />
   );
 }

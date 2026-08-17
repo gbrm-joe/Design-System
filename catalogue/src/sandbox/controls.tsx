@@ -5,12 +5,19 @@
 // It floats over the app rather than taking a band of its own, because a
 // control strip stealing 36px off the top would change the very geometry the
 // sandbox exists to show.
-import { Ruler, Palette, PanelLeftClose, PanelLeftOpen, ArrowLeft } from "lucide-react";
+import { Ruler, Palette, PanelLeftClose, PanelLeftOpen, ArrowLeft, Database } from "lucide-react";
+
+/** Loading and empty are states of the same screen, not different screens —
+ *  so they are a switch here rather than pages of their own. Flip through the
+ *  three and the chrome must not move: the nav, the h-12 band and the table's
+ *  two h-9 bars are identical in all three, and only the data area changes. */
+export type DataState = "full" | "loading" | "empty";
 
 export interface SandboxSettings {
   measures: boolean;
   navCollapsed: boolean;
   brand: string;
+  data: DataState;
 }
 
 /** Brand colours to prove the nav's states hold on any hue. The nav's active
@@ -135,6 +142,24 @@ export function SandboxControls({
         )}
         Nav
       </button>
+
+      <span className="h-5 w-px bg-neutral-700" />
+
+      <label
+        className="flex h-7 items-center gap-1.5 rounded px-2"
+        title="Loading and empty are states of the same screen — the chrome must not move between them"
+      >
+        <Database className="h-3.5 w-3.5" />
+        <select
+          value={settings.data}
+          onChange={(e) => onChange({ data: e.target.value as DataState })}
+          className="h-6 rounded border border-neutral-700 bg-neutral-800 px-1 text-xs text-neutral-200 outline-none"
+        >
+          <option value="full">Data</option>
+          <option value="loading">Loading</option>
+          <option value="empty">Empty</option>
+        </select>
+      </label>
 
       <span className="h-5 w-px bg-neutral-700" />
 

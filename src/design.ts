@@ -351,6 +351,13 @@ export const FIELD_TRIGGER =
 export const SURFACE_EMPTY =
   "rounded-lg border border-dashed border-neutral-200 bg-neutral-50 text-center text-xs text-neutral-400";
 
+/** The ONE loading placeholder — a grey bar standing in for a value that has
+ *  not arrived. Size it at the call site to the shape that is coming (a cell's
+ *  width, a tile's value line, a chart's box) so nothing moves when the data
+ *  lands. A spinner over a blank content area is not this: it hides the shape
+ *  instead of showing it, and the page jumps when it clears (2026-08-17). */
+export const SKELETON = "animate-pulse rounded bg-neutral-200";
+
 /** Mini uppercase section heading INSIDE a card or table. DECIDED (Joe,
  *  2026-08-04): text-[11px] is retired — text-xs like every label; hierarchy
  *  comes from placement, not another size. */

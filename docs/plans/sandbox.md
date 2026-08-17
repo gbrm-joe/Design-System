@@ -96,9 +96,25 @@ done.
       form block one column left, KPI band and chart right. *Done 2026-08-16.*
 - [x] **4 — the dashboard.** KPI tile band and two charts in cards, drawn at
       1:1. *Done 2026-08-16.*
-- [ ] **5 — the rest.** Dialogs, toasts, empty and loading states, the
-      conventions in live cells (em dashes, currency, dates, red negatives),
-      Soon items, the collapsed nav.
+- [x] **5 — the rest.** *Done 2026-08-17.* The New Project **dialog** (real
+      `Dialog`, `FormField` rows in one column, the only shadcn `Button`s on
+      screen) and **toasts** off Export, Create and the bulk delete. **Loading
+      and empty** became a devtools switch — Data · Loading · Empty — rather
+      than pages of their own, because that is what they are: states of one
+      screen. Flip it and the chrome must not move. A **second table** (Tasks)
+      carries what Projects couldn't: the toolbar's `filters` slot with a real
+      toggle in it, a totals footer off an aggregated column, and a negative
+      that is a count of days rather than money. **Soon** items were already in
+      both navs and the **collapsed nav** in the control panel; both checked
+      against the live screens rather than assumed.
+
+      It needed a rule that did not exist. The system had no loading treatment
+      at all, so drawing the state meant deciding one: `SKELETON` (design.ts),
+      "Loading and empty" (DESIGN_SYSTEM.md → Composed patterns), the Tokens
+      and Components pages, and `loading` / `emptyMessage` props on
+      `EntityTable` so the two h-9 bars and the totals row hold their place
+      while the body is bars. **That is a design call made to get the state
+      drawn — Joe's to keep or overrule.**
 - [ ] **6 — the measure overlay proper.** Every inset and gap the rules name,
       drawn over the live screen and labelled with its token.
 - [ ] **7 — close out.** CLAUDE.md and README updated for the dependency
@@ -133,15 +149,49 @@ simply building the pages; two were only visible once a real screen rendered.
 
 **Small, safe to fix next session:**
 
-4. `PanelEntry.subtitle` is documented as "a breadcrumb-style subtitle shown
+4. ~~`PanelEntry.subtitle` is documented as "a breadcrumb-style subtitle shown
    ABOVE the title (text-xs)". It renders inline BEFORE the title at text-sm,
-   as the clickable breadcrumb parent. The comment predates the breadcrumb
-   decision and now misdescribes it — which is why the sandbox's first record
-   shipped with no breadcrumb at all.
+   as the clickable breadcrumb parent.~~ *Fixed 2026-08-17* — on `PanelEntry`
+   and on `PanelConfig`, which repeated it. `title`'s comment claimed text-lg
+   and was wrong the same way; it renders text-sm.
 5. The 16px band inset lands 1px left of the first column's text, because the
    arithmetic (4px page inset + 12px cell padding) ignores the card's own 1px
    border. Sub-perceptual, and `px-[15px]` would be a worse rule than `px-4`.
    Noted so nobody "discovers" it later and thinks it is a bug.
+
+## What stage 5 found (2026-08-17)
+
+**Fixed here:**
+
+6. **The catalogue and the repo each installed their own copy of the peer
+   deps** (sonner 2.0.7 vs 2.0.8, base-ui, react-virtual). React was already
+   deduped in `vite.config.ts` — because two Reacts threw loudly. These fail
+   SILENTLY: sonner keeps its toast queue in module state, so a component's
+   `toast.success` can land in one copy while the sandbox's `<Toaster/>`
+   renders from the other, and the toast simply never appears. Anything with
+   module state or context is now deduped, not just React.
+
+**Needing Joe's decision — NOT fixed, because they are design calls:**
+
+7. **The shipped `Button`'s DEFAULT variant is a dark fill** (`bg-primary`),
+   which the rulebook bans outright in the apps. Dialog footers are the ONE
+   place `Button` is allowed, so `<Button>Create</Button>` — the obvious way to
+   write a confirm — ships the one shape the system forbids. `EntityTable`'s
+   delete dialog only dodges it by being `destructive`. A plain, non-destructive
+   confirm has no defined style at all: the sandbox uses `outline` + `ghost`.
+   Either the default variant changes or the rulebook names the footer pair.
+8. **`PanelHeader` ships a `tabs` prop that renders a horizontal tab strip** —
+   the exact shape L3 bans inside a record ("a tab strip is a different
+   navigation model and reads as a different application"). A component
+   offering the banned shape is how it comes back.
+9. **`CHART_HEIGHT` says one plot height (h-64, 256px); the catalogue's chart
+   draws at 172px** and every chart in the sandbox inherits that. One of the
+   two is wrong.
+10. **C2 contradicts itself inside one paragraph.** "Zero and absent are an em
+    dash. Never 0" — then "a dash says nothing here; a zero says measured, and
+    it is zero — different facts." A task due TODAY is a measured zero. The
+    sandbox follows the headline (dash), because the date beside it already
+    says today, but the rule needs to say one thing.
 
 ## Dummy data
 

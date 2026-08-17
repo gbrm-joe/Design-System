@@ -78,6 +78,7 @@ above it), never a second `neutral-200` band.
 | `COUNT_PILL` | Tiny count inside a button (Views 3) |
 | `TILE` | THE one KPI tile — **grey** (read-only; white is for editable/clickable only); `text-xs` label over `text-sm` tabular value. The dashboard's KpiCard composes it |
 | `SURFACE_*` | The ladder above, plus: `SURFACE_CARD_MUTED` (grey frame card holding white rows), `SURFACE_MENU` + `MENU_ITEM` (dropdowns), `SURFACE_EMPTY` (dashed empty state) |
+| `SKELETON` | The ONE loading placeholder — a grey bar in the shape of the value that is coming. Never a spinner on a blank page |
 | `CARD_HEADER` | Grey uppercase title strip across a card top |
 | `SECTION_LABEL` | Uppercase `text-xs` heading inside a card/table; `PANEL_GROUP_LABEL` composes it. `text-[11px]` is retired |
 | `TOOLTIP` | The one dark bubble |
@@ -139,6 +140,17 @@ is drift, even if every token inside is correct.
   fields left in ONE column, charts and KPIs right.
 - **Model sub-header** — scenario picker + grain toggle + collapse/nav
   controls, all h-7 in the h-9 chrome bar.
+- **Loading and empty are states of the same screen, not different screens.**
+  The chrome never waits for data: the nav, the h-12 title band and a table's
+  two h-9 bars render immediately in all three states, and only the data area
+  changes. **Loading is `SKELETON` bars drawn in the shape that is coming** —
+  the same row heights, in the same columns — never a spinner over a blank
+  content area, which hides the shape and makes the page jump when it clears.
+  **Empty is `SURFACE_EMPTY`**, saying what is missing and carrying the action
+  that fixes it; an empty table keeps its toolbar, because the way out of empty
+  is usually a button on it. *Why it needed saying*: nothing did, so the system
+  had no loading treatment at all — the sandbox had to invent one to draw the
+  state, which is how the gap surfaced (2026-08-17).
 
 ## Layout — L1 to L7
 

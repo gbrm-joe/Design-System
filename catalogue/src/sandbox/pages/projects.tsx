@@ -7,11 +7,23 @@
 // C6 (truncate, never wrap).
 import { useState } from "react";
 import { Plus, Download } from "lucide-react";
+import { toast } from "sonner";
 import {
   EntityTable,
   ColourBadge,
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  FormField,
+  fieldInput,
   PAGE_HEADER,
   PAGE_TITLE,
+  SURFACE_CARD,
   BTN,
   BTN_PRIMARY,
   DELTA_NEG,
@@ -26,6 +38,7 @@ import {
   DASH,
   type Project,
 } from "../data";
+import { type DataState } from "../controls";
 import { RecordBody } from "./record";
 
 const columns: ColumnDef<Project>[] = [
@@ -115,8 +128,9 @@ const columns: ColumnDef<Project>[] = [
   },
 ];
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ state }: { state: DataState }) {
   const [rows, setRows] = useState(PROJECTS);
+  const [adding, setAdding] = useState(false);
 
   return (
     <>
@@ -130,7 +144,12 @@ export default function ProjectsPage() {
 
       <div className="min-h-0 flex-1 overflow-hidden p-panelgap">
         <EntityTable<Project>
-          rows={rows}
+          // Loading and empty are states of THIS screen, not screens of their
+          // own: the band above and the table's two h-9 bars are identical in
+          // all three, and only the body changes. Flip the devtools switch and
+          // nothing may move.
+          rows={state === "full" ? rows : []}
+          loading={state === "loading"}
           columns={columns}
           defaultVisibleKeys={[
             "jobRef",
@@ -151,13 +170,30 @@ export default function ProjectsPage() {
           // Toggles never sit between action buttons — they go in `filters`.
           toolbar={
             <>
-              <button type="button" className={BTN_PRIMARY}>
+              <button type="button" className={BTN_PRIMARY} onClick={() => setAdding(true)}>
                 <Plus className="h-3.5 w-3.5" />
                 New Project
               </button>
-              <button type="button" className={BTN}>
+              <button
+                type="button"
+                className={BTN}
+                // A toast is how an action that finishes on its own reports
+                // back — bottom centre, one line, no dialog to dismiss.
+                onClick={() => toast.success("Export started — 74 projects")}
+              >
                 <Download className="h-3.5 w-3.5" />
                 Export
+              </button>
+            </>
+          }
+          emptyMessage={
+            <>
+              <span>No projects yet.</span>
+              {/* Empty says what is missing AND carries the action that fixes
+                  it — a dashed box with a sentence in it is a dead end. */}
+              <button type="button" className={BTN} onClick={() => setAdding(true)}>
+                <Plus className="h-3.5 w-3.5" />
+                New Project
               </button>
             </>
           }
@@ -170,14 +206,100 @@ export default function ProjectsPage() {
             title: (r) => r.name,
             // A record opened FROM A TABLE always breadcrumbs back to it:
             // `Parent › Record`, the parent clickable and closing the panel.
-            // A bare title with no way back is wrong. (`subtitle` is the
-            // breadcrumb parent — it renders inline before the title, not,
-            // as its own doc comment claims, above it.)
+            // A bare title with no way back is wrong. (`subtitle` IS the
+            // breadcrumb parent — it renders inline before the title.)
             subtitle: () => "Projects",
             content: (r) => <RecordBody project={r} />,
           }}
         />
       </div>
+
+      <NewProjectDialog
+        open={adding}
+        onOpenChange={setAdding}
+        onCreate={(name) => {
+          setAdding(false);
+          toast.success(`${name || "Project"} created`);
+        }}
+      />
     </>
+  );
+}
+
+/**
+ * The add dialog — the one place a shadcn `Button` is allowed (footers), and
+ * the one `text-lg` heading on screen (C7). Its fields are the SAME FormField
+ * rows as the record, in ONE column: a dialog is not an excuse for a second
+ * form language.
+ */
+function NewProjectDialog({
+  open,
+  onOpenChange,
+  onCreate,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onCreate: (name: string) => void;
+}) {
+  const [name, setName] = useState("");
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          {/* No size here — DialogTitle is text-lg by default and call sites
+              never override it. */}
+          <DialogTitle>New project</DialogTitle>
+          <DialogDescription className="text-xs">
+            The job ref is allocated on save.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* The default w-40 label cell (L7). w-28 is for a TIGHT panel and this
+            dialog is not one — at w-28 "Lead surveyor" truncates, which is a
+            worse trade than 12px of value width. */}
+        <div className={`${SURFACE_CARD} overflow-hidden`}>
+          <FormField label="Project">
+            <input
+              autoFocus
+              className={fieldInput}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Red Lion, Wakefield"
+            />
+          </FormField>
+          <FormField label="Client">
+            <select className={fieldInput} defaultValue="">
+              <option value="">—</option>
+              {["Marston's", "Greene King", "Star Pubs & Bars", "Admiral Taverns"].map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </FormField>
+          <FormField label="Lead surveyor">
+            <select className={fieldInput} defaultValue="Joe Millson">
+              {["Joe Millson", "Rachel Okonjo", "Tom Fairhurst", "Priya Nair"].map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </FormField>
+        </div>
+
+        <DialogFooter>
+          {/* NOTE (2026-08-17): `variant` is passed on BOTH, deliberately.
+              Button's DEFAULT variant is `bg-primary` — a dark fill, which the
+              rulebook bans outright in the apps — so a footer confirm written
+              the obvious way (`<Button>Create</Button>`) ships the one shape
+              the system forbids. EntityTable's delete dialog dodges it by
+              being destructive; a plain confirm has no defined style at all.
+              Logged for Joe in docs/plans/sandbox.md — a design call, not a
+              typo to fix quietly. */}
+          <DialogClose render={<Button variant="ghost" />}>Cancel</DialogClose>
+          <Button variant="outline" onClick={() => onCreate(name)}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

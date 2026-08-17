@@ -42,8 +42,14 @@ import {
   type MainNavGroup,
 } from "../../../src";
 import { SandboxLink, navigate, usePathname } from "./router";
-import { SandboxControls, MeasureOverlay, type SandboxSettings } from "./controls";
+import {
+  SandboxControls,
+  MeasureOverlay,
+  type SandboxSettings,
+  type DataState,
+} from "./controls";
 import ProjectsPage from "./pages/projects";
+import TasksPage from "./pages/tasks";
 import DashboardPage from "./pages/dashboard";
 import PlaceholderPage from "./pages/placeholder";
 
@@ -103,6 +109,7 @@ export default function Sandbox({ onExit }: { onExit: () => void }) {
     measures: false,
     navCollapsed: false,
     brand: "#09090b",
+    data: "full",
   });
 
   // The nav reads its colour from --sidebar-bg, exactly as an app's branding
@@ -137,7 +144,7 @@ export default function Sandbox({ onExit }: { onExit: () => void }) {
         />
 
         <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <Route path={pathname} />
+          <Route path={pathname} data={settings.data} />
         </main>
       </div>
 
@@ -152,8 +159,9 @@ export default function Sandbox({ onExit }: { onExit: () => void }) {
   );
 }
 
-function Route({ path }: { path: string }) {
-  if (path === "/projects") return <ProjectsPage />;
-  if (path === "/dashboard") return <DashboardPage />;
+function Route({ path, data }: { path: string; data: DataState }) {
+  if (path === "/projects") return <ProjectsPage state={data} />;
+  if (path === "/tasks") return <TasksPage state={data} />;
+  if (path === "/dashboard") return <DashboardPage state={data} />;
   return <PlaceholderPage title={TITLES[path] ?? "Not found"} onGo={navigate} />;
 }
