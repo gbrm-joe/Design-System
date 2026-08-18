@@ -26,6 +26,10 @@ Full rules in `DESIGN_SYSTEM.md`.
 
 ## Installing into an app
 
+**Full instructions: [`docs/adopting.md`](docs/adopting.md)** — the first
+install, step by step, and how an app moves onto a newer version afterwards.
+The summary:
+
 1. **Install a pinned release** (the tag is the version — upgrades are always
    deliberate):
 
@@ -128,7 +132,8 @@ cd catalogue && npm install && npm run dev
 
 3. Each app upgrades on its own schedule by bumping its pinned tag and
    reviewing the diff — run `/design-update` in the app to do that properly.
-   Nothing changes silently across live apps.
+   Nothing changes silently across live apps. The whole update job, with and
+   without the skill, is in [`docs/adopting.md`](docs/adopting.md).
 
 ## Components — and why they are here now
 
