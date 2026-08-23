@@ -5,7 +5,7 @@ import { ChevronRight, Trash2 } from "lucide-react";
 import { SheetTitle } from "./sheet";
 import { Button } from "./button";
 import { cn } from "../utils";
-import { PANEL_HEADER_BTN, SURFACE_CHROME, BREADCRUMB_PARENT, BREADCRUMB_SEP } from "../design";
+import { PANEL_HEADER_BTN, SURFACE_CHROME, HEADER_PAD, BREADCRUMB_PARENT, BREADCRUMB_SEP } from "../design";
 
 /**
  * PanelHeader — the single, canonical header for every detail / edit side panel
@@ -83,9 +83,10 @@ export function PanelHeader<T extends string = string>({
     <div className={`shrink-0 border-b border-neutral-200 ${SURFACE_CHROME}`}>
       {/* h-9 — the same 36px as the property tab bar and the scenario name bar
           above it, so the three read as one band of chrome. */}
-      {/* px-4 — the panel body is p-panelgap (4px) and a card label's text sits
-          12px inside it, so 16px lines the title up with the data below. */}
-      <div className="flex h-9 items-center justify-between px-4">
+      {/* HEADER_PAD — the panel body is p-panelgap (4px) and a card label's
+          text sits 12px inside it, so 16px lines the title up with the data
+          below. The same inset every band uses. */}
+      <div className={`flex h-9 items-center justify-between ${HEADER_PAD}`}>
         <div className="min-w-0">
           <SheetTitle className="flex min-w-0 items-center text-sm font-semibold text-neutral-900">
             {breadcrumb && breadcrumb.length > 0 ? (
@@ -130,7 +131,7 @@ export function PanelHeader<T extends string = string>({
         </div>
       </div>
       {tabs && tabs.length > 0 && (
-        <nav className="flex overflow-x-auto border-b border-neutral-200 px-4">
+        <nav className={`flex overflow-x-auto border-b border-neutral-200 ${HEADER_PAD}`}>
           {tabs.map((t) => {
             const active = activeTab === t.id;
             return (

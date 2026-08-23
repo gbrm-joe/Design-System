@@ -20,7 +20,8 @@ import {
   SURFACE_HEADER,
   SURFACE_CHROME,
 } from "../../src/design";
-import { LayoutIcon, PrinterIcon, GlobeIcon, ChevronLeft, ChevronRight } from "./ui";
+import { LayoutIcon, PrinterIcon, GlobeIcon, ChevronLeft, ChevronRight, Play } from "./ui";
+import Sandbox from "./sandbox/Sandbox";
 import AppTokens from "./pages/app-tokens";
 import AppComponents from "./pages/app-components";
 import AppLayout from "./pages/app-layout";
@@ -45,9 +46,16 @@ type PageKey = (typeof PAGES)[number]["key"];
 export default function App() {
   const [active, setActive] = useState<PageKey>("app/tokens");
   const [collapsed, setCollapsed] = useState(false);
+  const [sandbox, setSandbox] = useState(false);
   const { Page } = PAGES.find((p) => p.key === active)!;
   // A system's row reads as active while any of its sub-pages is open.
   const inApp = active.startsWith("app");
+
+  // The sandbox takes the whole viewport. Inside this column it would sit
+  // under the catalogue's own h-12 header, so its nav would not reach the top
+  // and its title band would not sit level with its app name — it would
+  // misrepresent L2 while claiming to demonstrate it.
+  if (sandbox) return <Sandbox onExit={() => setSandbox(false)} />;
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
@@ -98,6 +106,17 @@ export default function App() {
               );
             })}
           </nav>
+          {/* The sandbox — a real app, at real size, out of the real shipped
+              components. The pages above document the system; this one is the
+              only place you can see whether a screen is actually right. */}
+          <button
+            onClick={() => setSandbox(true)}
+            aria-label="Open the sandbox"
+            className={`${NAV_ITEM} mx-panelgap mb-2 flex items-center gap-2 border-t border-neutral-200 pt-2 text-left ${collapsed ? "justify-center px-0" : NAV_ITEM_INSET} !h-auto text-neutral-600 hover:text-neutral-900`}
+          >
+            <Play className={NAV_ICON} />
+            {!collapsed && "Sandbox"}
+          </button>
           <button
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}

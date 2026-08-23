@@ -39,6 +39,7 @@ import {
   SURFACE_MENU,
   MENU_ITEM,
   SURFACE_EMPTY,
+  SKELETON,
   SECTION_LABEL,
   TOOLTIP,
   CHECKBOX,
@@ -213,6 +214,20 @@ export default function AppSystem() {
         </Spec>
         <Spec name="SURFACE_EMPTY">
           <div className={`${SURFACE_EMPTY} w-64 py-6`}>No leases yet</div>
+        </Spec>
+        <Spec name="SKELETON — the loading state is the shape that is coming">
+          {/* Drawn in the columns the rows will use, at the row height they
+              will have, so nothing moves when the data lands. A spinner over a
+              blank area would hide all of that. */}
+          <div className={`${SURFACE_CARD} w-96 divide-y divide-neutral-100`}>
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="flex h-8 items-center gap-3 px-3">
+                <span className={`${SKELETON} h-2.5 w-10`} />
+                <span className={`${SKELETON} h-2.5 flex-1`} />
+                <span className={`${SKELETON} h-2.5 w-16`} />
+              </div>
+            ))}
+          </div>
         </Spec>
         <Spec name="TILE (read-only, so grey) — band of flex-1 with GAP">
           <div className={`flex w-96 ${GAP}`}>

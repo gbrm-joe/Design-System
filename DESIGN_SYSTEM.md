@@ -28,6 +28,7 @@ frame — navigation, headers, sub-headers, toolbars — as opposed to content.
 | `CONTROL_H` | 28 px (`h-7`) | The ONE control height — buttons, fields, chips, selects |
 | `BAR_H` | 36 px (`h-9`) | The ONE bar height — table toolbar, column headers, sub-header |
 | `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
+| `HEADER_PAD` | 16 px (`px-4`) | The ONE band inset. Content below a band is inset by the one gap (4px) and a card's text sits 12px inside that, so 16px puts the band's title on the same vertical line as the first value beneath it. Page-title band, record header, `PanelHeader` — all of them. **The nav's app-name band is the one exception at 12px**: it aligns to the nav's own column (L8's group headers), not to content it doesn't sit above |
 | `NAV_ITEM` | 13 px text, FIXED `h-6` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike. The height is fixed, not padding-derived, so a collapsed icon-only row is the same height as its expanded twin (L8); active = a step of contrast, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
 | Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
 | Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
@@ -77,10 +78,13 @@ above it), never a second `neutral-200` band.
 | `COUNT_PILL` | Tiny count inside a button (Views 3) |
 | `TILE` | THE one KPI tile — **grey** (read-only; white is for editable/clickable only); `text-xs` label over `text-sm` tabular value. The dashboard's KpiCard composes it |
 | `SURFACE_*` | The ladder above, plus: `SURFACE_CARD_MUTED` (grey frame card holding white rows), `SURFACE_MENU` + `MENU_ITEM` (dropdowns), `SURFACE_EMPTY` (dashed empty state) |
+| `SKELETON` | The ONE loading placeholder — a grey bar in the shape of the value that is coming. Never a spinner on a blank page |
 | `CARD_HEADER` | Grey uppercase title strip across a card top |
 | `SECTION_LABEL` | Uppercase `text-xs` heading inside a card/table; `PANEL_GROUP_LABEL` composes it. `text-[11px]` is retired |
 | `TOOLTIP` | The one dark bubble |
 | `CHECKBOX` | The one checkbox — 14px, one accent (neutral-800) |
+| `PAGE_HEADER` + `PAGE_TITLE` | THE page-title band (L2) and its one line of title — every page opens with this; never hand-rolled |
+| `HEADER_PAD` | The ONE inset for any `HEADER_H` band — 16px |
 | `PANEL_TITLE` | Detail-panel title text |
 | `BREADCRUMB_PARENT` / `BREADCRUMB_SEP` | The one breadcrumb style: muted clickable parent, ChevronRight separator, dark title |
 
@@ -136,6 +140,17 @@ is drift, even if every token inside is correct.
   fields left in ONE column, charts and KPIs right.
 - **Model sub-header** — scenario picker + grain toggle + collapse/nav
   controls, all h-7 in the h-9 chrome bar.
+- **Loading and empty are states of the same screen, not different screens.**
+  The chrome never waits for data: the nav, the h-12 title band and a table's
+  two h-9 bars render immediately in all three states, and only the data area
+  changes. **Loading is `SKELETON` bars drawn in the shape that is coming** —
+  the same row heights, in the same columns — never a spinner over a blank
+  content area, which hides the shape and makes the page jump when it clears.
+  **Empty is `SURFACE_EMPTY`**, saying what is missing and carrying the action
+  that fixes it; an empty table keeps its toolbar, because the way out of empty
+  is usually a button on it. *Why it needed saying*: nothing did, so the system
+  had no loading treatment at all — the sandbox had to invent one to draw the
+  state, which is how the gap surfaced (2026-08-17).
 
 ## Layout — L1 to L7
 
@@ -159,7 +174,18 @@ renders `FormField` fails the check.
 **L2 — a page is: main nav · h-12 title band · content inset by the ONE gap.**
 Content starts on the band's border line, never floating below it with a
 margin. A dashboard is a page like any other — the same h-12 band, never a
-hero title with a subtitle under it.
+hero title with a subtitle under it. **The band is `PAGE_HEADER` — import it;
+its inset is `HEADER_PAD` (16px), not the 4px page inset.** The band is 48px
+tall around a 20px line, so it carries ~14px of air above and below the title;
+at 4px in, the title reads as jammed against the nav and lines up with nothing
+below it. 16px is not a taste call — it is 4px of page inset plus the 12px a
+card's own text sits in, so the page title lands on the same vertical line as
+the first column header in the table beneath it. Actions sit at the right end
+of the same band. *Guarded*: an `h-12` band carrying `px-panelgap`/`px-1`/
+`px-2`/`px-3` fails the check.
+*Why it needed saying*: nothing did, so Project Manager used the page inset and
+shipped a title 4px from the sidebar. Every token in that band was correct
+(Joe, 2026-08-16).
 
 **L3 — a record is: h-12 header band · side nav left · h-9 sub-header · body.**
 Records navigate DOWN their own left column (`PanelNav`), exactly like the main
@@ -319,6 +345,8 @@ posture — the page is for reading, not editing.
 - A local copy of anything the package ships — a per-app table, **sidebar**,
   panel header, panel stack, sheet, form-field row or badge. Import it or it
   is drift.
+- **A page-title band inset by anything but `HEADER_PAD`** — 16px, so the title
+  lines up with the data under it (L2). The 4px page inset is for content.
 - **Nav items flush with their group header** — items are always indented
   under it (L8), and the nav's insets never vary between apps.
 - **Two columns of FormFields** (`grid-cols-2` and friends) — L1.

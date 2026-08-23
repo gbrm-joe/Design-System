@@ -34,7 +34,7 @@ import {
 } from "./dialog";
 import type { ActionResult } from "../action-result";
 import { cn } from "../utils";
-import { BTN, BTN_ACTIVE, BTN_PRIMARY, BTN_DANGER, BTN_ICON_GHOST, FIELD, FIELD_SEARCH, CHIP, COUNT_PILL, SURFACE_BAR, SURFACE_CARD, SURFACE_MENU, MENU_ITEM, CHECKBOX } from "../design";
+import { BTN, BTN_ACTIVE, BTN_PRIMARY, BTN_DANGER, BTN_ICON_GHOST, FIELD, FIELD_SEARCH, CHIP, COUNT_PILL, SURFACE_BAR, SURFACE_CARD, SURFACE_EMPTY, SURFACE_MENU, MENU_ITEM, CHECKBOX, SKELETON } from "../design";
 
 // ---------------------------------------------------------------------------
 // A generic master-list table — the surveys-table chrome (toolbar, column
@@ -75,6 +75,9 @@ export interface ColumnDef<T> {
 export interface PanelConfig<T> {
   id: (r: T) => string;
   title: (r: T) => string;
+  /** The breadcrumb PARENT, rendered inline before the title and closing the
+   *  panel back to this table when clicked — e.g. `() => "Projects"`. A record
+   *  opened from a table always has one. */
   subtitle?: (r: T) => string;
   /** Optional inline content rendered beside the title (e.g. an ID badge). */
   titleExtra?: (r: T) => ReactNode;
@@ -489,6 +492,8 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
   onDelete,
   deleteVerb = "Delete",
   selectionActions,
+  loading = false,
+  emptyMessage,
 }: {
   rows: T[];
   columns: ColumnDef<T>[];
@@ -520,6 +525,13 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
   /** Extra buttons for the selection pill (e.g. "Copy to…"), rendered before
    *  Delete. `clear` empties the selection. */
   selectionActions?: (ids: K[], clear: () => void) => ReactNode;
+  /** Data hasn't arrived yet. The chrome stays: toolbar and column headers
+   *  render as normal and only the body becomes SKELETON bars, in the same
+   *  columns at the same row height, so nothing moves when the rows land. */
+  loading?: boolean;
+  /** What an empty table says, and the control that fixes it (e.g. the add
+   *  button). Defaults to "No {many} found." */
+  emptyMessage?: ReactNode;
 }) {
   const { open } = usePanelStack();
   const selectable = !!onDelete;
@@ -1305,13 +1317,39 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
             </tr>
           </thead>
           <tbody>
-            {flatItems.length === 0 ? (
+            {loading ? (
+              // The shape that is coming, in the columns it is coming into —
+              // never a spinner over a blank body (DESIGN_SYSTEM.md → Loading
+              // and empty). Widths vary a little so it reads as data rather
+              // than as a striped pattern.
+              // As many rows as the table will actually show, measured from the
+              // same height the virtualiser scrolls in: two h-9 bars off the
+              // top, the totals bar off the bottom, 29px a row. A fixed dozen
+              // leaves the card half-height and it jumps taller the moment the
+              // data lands, which is the very thing the rule is about.
+              Array.from({ length: Math.max(6, Math.floor(((maxH ?? 400) - 72 - 29) / 29)) }, (_, i) => (
+                <tr key={i} className="border-b border-neutral-100" aria-hidden>
+                  {selectable && (
+                    <td className="px-3 py-1.5">
+                      <span className={`${SKELETON} block h-3.5 w-3.5`} />
+                    </td>
+                  )}
+                  {visibleColDefs.map((c, j) => (
+                    <td key={c.key} className="px-3 py-1.5">
+                      <span
+                        className={`${SKELETON} block h-3`}
+                        style={{ width: `${[92, 70, 84, 58, 76][(i + j) % 5]}%` }}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : flatItems.length === 0 ? (
               <tr>
-                <td
-                  colSpan={totalCols}
-                  className="px-3 py-6 text-center text-xs text-neutral-400"
-                >
-                  No {entityNoun.many} found.
+                <td colSpan={totalCols} className="p-panelgap">
+                  <div className={`${SURFACE_EMPTY} flex flex-col items-center gap-2 py-6`}>
+                    {emptyMessage ?? `No ${entityNoun.many} found.`}
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -1335,7 +1373,18 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
               </>
             )}
           </tbody>
-          {rows.length > 0 && (
+          {loading ? (
+            // The totals bar is part of the shape that is coming, so it holds
+            // its 28px while loading rather than appearing under the rows and
+            // shunting them up when the data lands.
+            <tfoot className={`sticky bottom-0 z-10 ${SURFACE_BAR} shadow-[0_-1px_0_0_#d4d4d4]`} aria-hidden>
+              <tr>
+                <td colSpan={totalCols} className="px-3 py-1.5">
+                  <span className={`${SKELETON} block h-3 w-32`} />
+                </td>
+              </tr>
+            </tfoot>
+          ) : rows.length > 0 ? (
             // Sticky totals: always visible without scrolling to the end.
             // Chrome grey like the header row (non-editable = never white);
             // the shadow draws the top rule (borders don't survive sticky).
@@ -1355,15 +1404,24 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
                 )}
               </tr>
             </tfoot>
-          )}
+          ) : null}
         </table>
       </div>
 
       {/* ── Mobile cards ─────────────────────────────────────────────────── */}
-      {rows.length === 0 ? (
-        <p className={`${SURFACE_CARD} p-6 text-center text-sm text-neutral-500 desk:hidden`}>
-          No {entityNoun.many} found.
-        </p>
+      {loading ? (
+        <div className="flex flex-col gap-3 desk:hidden" aria-hidden>
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className={cn(SURFACE_CARD, "flex flex-col gap-2 p-3")}>
+              <span className={`${SKELETON} h-3 w-2/3`} />
+              <span className={`${SKELETON} h-3 w-1/3`} />
+            </div>
+          ))}
+        </div>
+      ) : rows.length === 0 ? (
+        <div className={`${SURFACE_EMPTY} flex flex-col items-center gap-2 p-6 desk:hidden`}>
+          {emptyMessage ?? `No ${entityNoun.many} found.`}
+        </div>
       ) : (
         <div ref={mobileScrollRef} className="max-h-[78dvh] overflow-auto desk:hidden" style={scrollMaxH}>
           <div

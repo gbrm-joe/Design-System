@@ -22,57 +22,32 @@ Full rules in `DESIGN_SYSTEM.md`.
 | Print page setup | `css/print.css` | A4 portrait, 15mm margins — imported by report stylesheets alongside the `PRINT_*` tokens. |
 | Rulebook | `DESIGN_SYSTEM.md` | The written rules — scale, surfaces, layout (L1–L8), conventions (C1–C8), when each primitive applies. |
 | Drift guard | `scripts/check-design.sh` | Fails an app's build when control styling is hand-rolled instead of composed from the tokens, or when a layout or convention rule it can see is broken. |
-| Upgrade skill | `skills/design-update/` | The `/design-update` Claude Code skill — bumps an app's pinned tag, diffs the rulebook, fixes every guard failure and applies the rest by hand. Versioned with the rules it enforces; installed into an app by `scripts/install-skills.sh`. |
+| Skills | `skills/` | The two Claude Code commands an app is run with: `/design-install` (first install) and `/design-update` (move onto a newer version). Versioned with the rules they enforce; installed into an app by `scripts/install-skills.sh`. |
 
-## Installing into an app
+## Installing into an app, and updating one
 
-1. **Install a pinned release** (the tag is the version — upgrades are always
-   deliberate):
+Two commands, both run **in the app's repo**, both in Claude Code:
 
-   ```sh
-   npm install github:gbrm-joe/Design-System#v0.1.0
-   ```
+| Command | When |
+|---|---|
+| `/design-install` | The app has never used the Design System. Pins the release, adds the peer deps, wires the theme and the guard, installs the skills, replaces the app's own sidebar/table/panel/field with the shipped components, fixes every guard failure, verifies, commits. |
+| `/design-update` | The app already has it and a newer version exists. Bumps the pin, diffs the rulebook old against new, fixes every guard failure, applies the rule changes the guard cannot see, verifies, commits. |
 
-2. **Wire the theme into Tailwind** — in the app's global stylesheet:
+Both skills ship inside the package (`skills/`), so they are versioned with the
+rules they enforce. `scripts/install-skills.sh` copies them into the app's
+`.claude/skills/` — Claude Code only finds skills at the app root, never inside
+`node_modules` — and `/design-update` re-runs that install after every bump, so
+the instructions update along with the rules.
 
-   ```css
-   @import "tailwindcss";
-   @import "@gbrm/design/theme.css";
-   @source "../../node_modules/@gbrm/design/dist";
-   ```
+The very first app has a chicken-and-egg: `/design-install` lives in the
+package, and the package isn't there yet. Either run it from a personal copy of
+the skill, or bootstrap by hand and let the skill take over:
 
-   The `@source` line makes Tailwind scan the package for class names —
-   without it, classes used only via the tokens are silently missing. Adjust
-   the relative path from the stylesheet to `node_modules`.
-
-3. **Wire the drift guard** — in the app's `package.json` scripts:
-
-   ```json
-   "check:design": "sh node_modules/@gbrm/design/scripts/check-design.sh"
-   ```
-
-   Run it in CI / before commit. An app can exempt specific files by listing
-   grep patterns, one per line, in a `.design-check-ignore` at its root.
-
-4. **Wire the upgrade skill** — in the app's `package.json` scripts, then run
-   it once:
-
-   ```json
-   "install:skills": "sh node_modules/@gbrm/design/scripts/install-skills.sh"
-   ```
-
-   Claude Code only discovers skills at the app root, never inside
-   `node_modules`, so this copies the packaged skills into the app's
-   `.claude/skills/`. The copy is package-owned and overwritten on every run —
-   never edit it in the app. From then on the app upgrades with
-   `/design-update`, which re-runs this install itself so the skill stays in
-   step with the rules.
-
-5. **Import tokens, delete local copies:**
-
-   ```ts
-   import { BTN, FIELD, SURFACE_CARD } from "@gbrm/design";
-   ```
+```sh
+npm install github:gbrm-joe/Design-System#vX.Y.Z   # newest tag
+npm pkg set scripts.install:skills="sh node_modules/@gbrm/design/scripts/install-skills.sh"
+npm run install:skills                              # /design-install now exists here
+```
 
 ## The catalogue
 
@@ -80,6 +55,21 @@ Full rules in `DESIGN_SYSTEM.md`.
 `src/` — edit a token or a component, refresh, see it. It is the reference
 rendering: if an app screen doesn't match the catalogue, the screen is wrong.
 Review every design change here before tagging a release.
+
+Below the page list sits the **Sandbox** — a working demo app (nav, pages,
+tables, records, dialogs, dummy data) built from the REAL components in
+`src/`, at full size, on the whole viewport. The pages above document the
+system; the sandbox is the only place you can see whether a screen is actually
+right. It exists because none of the documentation pages could have caught a
+page title sitting 4px from the sidebar: tokens are drawn alone, components as
+specimens, and the Layout page is schematics at reduced scale — a schematic
+cannot show a 12px error. Its devtools strip toggles a measure overlay (the
+insets and alignment lines the rules name, drawn over the live screen), the
+nav's collapsed state, and the brand colour.
+
+Because it imports the real components it carries the package's peer
+dependencies; the four documentation pages stay dependency-free and keep
+reproducing components by hand. See `docs/plans/sandbox.md`.
 
 Its sidebar switches media (Application · Print · Website); **Application** has
 four pages:
@@ -111,9 +101,8 @@ cd catalogue && npm install && npm run dev
    git tag v0.2.0 && git push --tags
    ```
 
-3. Each app upgrades on its own schedule by bumping its pinned tag and
-   reviewing the diff — run `/design-update` in the app to do that properly.
-   Nothing changes silently across live apps.
+3. Each app upgrades on its own schedule by running `/design-update` in its own
+   repo. Nothing changes silently across live apps.
 
 ## Components — and why they are here now
 

@@ -49,6 +49,8 @@ import {
   SURFACE_CARD,
   CARD_HEADER,
   SURFACE_MENU,
+  SURFACE_EMPTY,
+  SKELETON,
   MENU_ITEM,
   TILE,
   PANEL_GROUP_LABEL,
@@ -586,6 +588,54 @@ export default function AppComponents() {
               <button className={BTN_DANGER}><Trash />Delete</button>
               <button className={BTN_ICON_GHOST} aria-label="Clear selection"><X /></button>
             </div>
+          </div>
+        </Anatomy>
+        <Anatomy
+          name="Loading and empty — the same table, not different screens"
+          rule="The chrome never waits for data: both bars render as normal in all three states and only the body changes. Loading is SKELETON bars in the columns the rows are coming into, as many as the table will actually show — a spinner over a blank body hides the shape and the page jumps when it clears. Empty is SURFACE_EMPTY, saying what is missing and carrying the action that fixes it; the toolbar stays, because the way out of empty is usually a button on it."
+        >
+          <div className="flex w-full flex-col gap-4">
+            {(["loading", "empty"] as const).map((state) => (
+              <div key={state} className={`${SURFACE_CARD} overflow-hidden`}>
+                <div className={`flex h-9 items-center gap-panelgap border-b border-neutral-200 ${SURFACE_BAR} px-panelgap`}>
+                  <button className={BTN_PRIMARY}><Plus />Add property</button>
+                  <button className={BTN}>Columns</button>
+                </div>
+                <table className="w-full table-fixed border-collapse text-xs">
+                  <thead className={SURFACE_BAR}>
+                    <tr className="border-b border-neutral-200 bg-neutral-50">
+                      {["Property", "Portfolio", "Status", "Passing rent"].map((label) => (
+                        <th key={label} className="h-9 px-3 text-left text-xs font-semibold tracking-wide text-neutral-600 uppercase">
+                          {label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {state === "loading" ? (
+                      [0, 1, 2, 3].map((i) => (
+                        <tr key={i} className="border-b border-neutral-100">
+                          {[92, 70, 58, 76].map((w, j) => (
+                            <td key={j} className="px-3 py-1.5">
+                              <span className={`${SKELETON} block h-3`} style={{ width: `${w}%` }} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="p-panelgap">
+                          <div className={`${SURFACE_EMPTY} flex flex-col items-center gap-2 py-6`}>
+                            <span>No properties yet.</span>
+                            <button className={BTN}><Plus />Add property</button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            ))}
           </div>
         </Anatomy>
         <Anatomy name="ColumnHeaderMenu — sort, filter and group all live in the column header, never in the toolbar">

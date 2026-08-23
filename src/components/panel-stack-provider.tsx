@@ -15,9 +15,16 @@ import {
 export interface PanelEntry {
   /** Unique key for this panel instance (e.g. "portfolio-8", "lease-42"). */
   id: string;
-  /** Title shown in the panel header (text-lg, matching page titles). */
+  /** Title shown in the panel header — text-sm, level with the app name in the
+   *  nav beside it (HEADER_H's one centred line). */
   title: string;
-  /** Optional breadcrumb-style subtitle shown above the title (text-xs). */
+  /** The breadcrumb PARENT — rendered inline BEFORE the title at text-sm
+   *  (`Projects › The Swan`), muted and clickable: clicking it closes this
+   *  panel, which is how a record gets back to the table it opened from. It is
+   *  not a subtitle above the title; the name predates the breadcrumb decision
+   *  and the old comment saying "above the title (text-xs)" misdescribed it,
+   *  which is how the sandbox's first record shipped with no breadcrumb at all
+   *  (2026-08-17). */
   subtitle?: string;
   /** Optional inline content rendered beside the title (e.g. badges, dates). */
   titleExtra?: ReactNode;
