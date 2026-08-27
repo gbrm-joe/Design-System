@@ -59,21 +59,40 @@ export const NAV_ICON = "h-3 w-3 shrink-0";
 /** The nav's own horizontal padding — the ONE gap (L5), so an active row's
  *  rounded pill has 4px of breathing room and never collides with the edge. */
 export const NAV_PAD = "px-panelgap";
-/** The ONE nav indent (L8). Measured FROM THE NAV'S EDGE: a group header sits
- *  at 12px, its items at 24px, a nested item at 36px — items are always
- *  INDENTED under their header, never flush with it. (The class values below
- *  are the ROW's own padding; NAV_PAD's 4px makes up the difference.)
+/** The ONE nav indent (L8). Measured FROM THE NAV'S EDGE: **a group header
+ *  lines up with the band directly above it**, and its items step 12px in from
+ *  there, a nested item 12px again. The main nav's band is `pl-3`, so it runs
+ *  12px / 24px / 36px. (The class values below are the ROW's own padding;
+ *  NAV_PAD's 4px makes up the difference.)
  *  Two apps hand-rolled this and landed on 24px vs 12px with no indent at all
  *  (Joe, 2026-08-06), which is why the geometry now lives in a token and a
  *  component rather than in each app's sidebar. */
 export const NAV_GROUP_INSET = "px-2";
 export const NAV_ITEM_INSET = "pl-5 pr-3";
 export const NAV_ITEM_INSET_NESTED = "pl-8 pr-3";
+
+/** The same three steps for a nav INSIDE a panel, where the band above is the
+ *  record header at HEADER_PAD (16px) rather than the main nav's 12px: 16px /
+ *  28px / 40px. The rule is unchanged — the group header sits under the
+ *  breadcrumb, items step 12px in — only the starting line moves, because the
+ *  band it answers to is 4px further in.
+ *
+ *  The panel's group header used to be 8px: it is full-bleed (`-mx-panelgap`
+ *  cancels NAV_PAD so its rules reach both edges) and nobody added the 4px
+ *  back, so it sat left of L8's own number AND left of the breadcrumb above
+ *  it, which is how it was spotted (Joe, 2026-08-27). */
+export const PANEL_NAV_GROUP_INSET = "px-4";
+export const PANEL_NAV_ITEM_INSET = "pl-6 pr-3";
+export const PANEL_NAV_ITEM_INSET_NESTED = "pl-9 pr-3";
 /** A nav group header. Geometry only; the colour comes from the surface —
  *  BRAND_MUTED on the main nav, neutral on a panel's. h-9 matches the
  *  sub-header bar so a main-nav group label and a panel's line up. */
-export const NAV_GROUP_LABEL =
-  `flex h-9 shrink-0 items-center text-xs font-semibold uppercase tracking-wide ${NAV_GROUP_INSET}`;
+const NAV_GROUP_LABEL_BASE =
+  "flex h-9 shrink-0 items-center text-xs font-semibold uppercase tracking-wide";
+export const NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} ${NAV_GROUP_INSET}`;
+/** The same header inside a panel — one step further in, so it lands under the
+ *  record header's breadcrumb. See PANEL_NAV_GROUP_INSET. */
+export const PANEL_NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} ${PANEL_NAV_GROUP_INSET}`;
 /** What a group header becomes when the nav is COLLAPSED: the label can't be
  *  read at 48px, so it turns into a rule — but it keeps the label's h-9, so
  *  every row below it stays exactly where it was. A short divider here is why

@@ -28,7 +28,7 @@ frame — navigation, headers, sub-headers, toolbars — as opposed to content.
 | `CONTROL_H` | 28 px (`h-7`) | The ONE control height — buttons, fields, chips, selects |
 | `BAR_H` | 36 px (`h-9`) | The ONE bar height — table toolbar, column headers, sub-header |
 | `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
-| `HEADER_PAD` | 16 px (`px-4`) | The ONE band inset. Content below a band is inset by the one gap (4px) and a card's text sits 12px inside that, so 16px puts the band's title on the same vertical line as the first value beneath it. Page-title band, record header, `PanelHeader` — all of them. **The nav's app-name band is the one exception at 12px**: it aligns to the nav's own column (L8's group headers), not to content it doesn't sit above |
+| `HEADER_PAD` | 16 px (`px-4`) | The ONE band inset. Content below a band is inset by the one gap (4px) and a card's text sits 12px inside that, so 16px puts the band's title on the same vertical line as the first value beneath it. Page-title band, record header, `PanelHeader` — all of them, and a record's side nav answers to it too (L8). **The nav's app-name band is the one exception at 12px**: it aligns to the nav's own column (L8's group headers), not to content it doesn't sit above |
 | `NAV_ITEM` | 13 px text, FIXED `h-6` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike. The height is fixed, not padding-derived, so a collapsed icon-only row is the same height as its expanded twin (L8); active = a step of contrast, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
 | Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
 | Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
@@ -218,15 +218,28 @@ form block `~w-1/3` (L1) · FormField label cell `w-40`
 default, narrowed to `w-28` in a tight panel and never wider · table search
 `w-64`, alone at the right end of the toolbar.
 
-**L8 — nav items are INDENTED under their group header. 12px, 24px, 36px.**
-Measured from the nav's own edge: a group header sits at 12px, its items at
-24px, a nested item at 36px. This holds in BOTH navs — the main sidebar and a
-record's `PanelNav` — so a group label sits on the same line whichever you are
-looking at. The nav's only horizontal padding is the ONE gap (4px), enough for
-an active row's rounded pill to clear the edge; every other inset is one
-number on the row itself, never a nav pad plus a row pad added together.
-Groups are separated by their `h-9` header and the one 4px gap — never by a
-bigger margin.
+**L8 — a group header lines up with the band above it; items step 12px in.**
+Measured from the nav's own edge. **The group header takes the inset of the
+band directly above the nav**, because they share a left edge and the eye reads
+them as one column:
+
+| Nav | Band above it | Group header | Item | Nested item |
+| --- | --- | --- | --- | --- |
+| Main sidebar | app-name band, `pl-3` | 12px | 24px | 36px |
+| A record's `PanelNav` | record header, `HEADER_PAD` | 16px | 28px | 40px |
+
+The step between levels is 12px in both. Anything else full-bleed down that
+edge — the group rules, the Collapse row — takes the group header's inset too,
+so a panel's left edge is ONE line from the breadcrumb to the bottom. The nav's
+only horizontal padding is the ONE gap (4px), enough for an active row's
+rounded pill to clear the edge; every other inset is one number on the row
+itself, never a nav pad plus a row pad added together. Groups are separated by
+their `h-9` header and the one 4px gap — never by a bigger margin.
+
+*Why it needed saying*: the panel's group header was full-bleed
+(`-mx-panelgap` cancels the nav pad so its rules reach both edges) and nobody
+added the 4px back, so it sat at 8px — left of the old rule's own number and
+left of the breadcrumb above it (Joe, 2026-08-27).
 
 **Both navs obey the same state rule, from the same tokens.** `NAV_ACTIVE` /
 `NAV_IDLE` / `NAV_MUTED` on a light nav, `BRAND_ACTIVE` / `BRAND_IDLE` /

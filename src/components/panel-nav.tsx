@@ -7,13 +7,13 @@ import {
   NAV_ACTIVE,
   NAV_COLLAPSE,
   NAV_COUNT,
-  NAV_GROUP_LABEL,
   NAV_ICON,
   NAV_IDLE,
   NAV_ITEM,
-  NAV_ITEM_INSET,
-  NAV_ITEM_INSET_NESTED,
   NAV_MUTED,
+  PANEL_NAV_GROUP_LABEL,
+  PANEL_NAV_ITEM_INSET,
+  PANEL_NAV_ITEM_INSET_NESTED,
   NAV_PAD,
   SURFACE_CHROME,
   TAG,
@@ -53,14 +53,14 @@ export interface PanelNavGroup {
 function NavGroupLabel({ label, first }: { label: string; first?: boolean }) {
   // Full-bleed faint borders separate groups. h-9 matches the sub-header bar
   // so their edges line up; the first group drops its top border because the
-  // record header's rule already serves. The 12px inset is L8's — shared with
-  // the main nav, so a group header sits on the same line in either nav.
+  // record header's rule already serves. L8: the label lands on the SAME line
+  // as the breadcrumb in the band above it — 16px, the panel's band inset.
   return (
     <p
       className={cn(
-        NAV_GROUP_LABEL,
-        // -mx-panelgap cancels NAV_PAD so the rules run full-bleed; the label
-        // still lands on L8's 12px.
+        PANEL_NAV_GROUP_LABEL,
+        // -mx-panelgap cancels NAV_PAD so the rules run full-bleed, which is
+        // why the label carries the whole 16px itself rather than 12 + NAV_PAD.
         "-mx-panelgap border-neutral-200 text-black",
         first ? "-mt-2 border-b" : "border-y",
       )}
@@ -87,7 +87,7 @@ function PanelNavRow({
         NAV_ITEM,
         "flex w-full shrink-0 items-center justify-between text-left",
         // L8 — one step in from the group header; a nested item takes one more.
-        item.indent ? NAV_ITEM_INSET_NESTED : NAV_ITEM_INSET,
+        item.indent ? PANEL_NAV_ITEM_INSET_NESTED : PANEL_NAV_ITEM_INSET,
         // The same three states as the main nav, from the same tokens — only
         // the direction flips, because this surface is light.
         active ? NAV_ACTIVE : item.soon ? NAV_MUTED : NAV_IDLE,
@@ -173,11 +173,13 @@ export function PanelNav({
         ))}
       </nav>
       {/* Collapse — pinned at the very bottom, level with the main nav's, and
-          closed by the same border-t as the collapsed rail's. */}
+          closed by the same border-t as the collapsed rail's. Full-bleed like
+          the group headers, so it takes their 16px inset: everything down a
+          panel's left edge sits on ONE line. */}
       <button
         type="button"
         onClick={onToggleCollapsed}
-        className={cn(NAV_COLLAPSE, "shrink-0 border-t border-neutral-200", NAV_IDLE)}
+        className={cn(NAV_COLLAPSE, "shrink-0 border-t border-neutral-200 px-4", NAV_IDLE)}
       >
         <PanelLeftClose className={NAV_ICON} /> Collapse
       </button>

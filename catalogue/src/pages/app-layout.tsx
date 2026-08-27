@@ -302,11 +302,11 @@ export default function AppLayout() {
 
         <Rule
           n={8}
-          title="Nav items are INDENTED under their group header — 12px, 24px, 36px"
-          note="Measured from the nav's own edge, and it holds in BOTH navs — the main sidebar and a record's PanelNav — so a group label sits on the same line whichever you are looking at. The nav's only horizontal padding is the ONE gap (4px), enough for an active row's rounded pill to clear the edge; every other inset is one number on the row itself, never a nav pad plus a row pad added together."
+          title="A group header lines up with the band above it; items step 12px in"
+          note="Measured from the nav's own edge. The group header takes the inset of the band directly above the nav, because they share a left edge: the main sidebar's app-name band is 12px, so it runs 12 / 24 / 36; a record's PanelNav sits under the record header at HEADER_PAD, so it runs 16 / 28 / 40. The step is 12px in both. Anything else full-bleed down that edge — the group rules, the Collapse row — takes the group header's inset too, so a panel's left edge is ONE line from the breadcrumb down. The nav's only horizontal padding is the ONE gap (4px), enough for an active row's rounded pill to clear the edge; every other inset is one number on the row itself, never a nav pad plus a row pad added together."
         >
           <div className="flex flex-col gap-3">
-            <Verdict ok>header at 12, items at 24, nested at 36 — and one 4px gap throughout</Verdict>
+            <Verdict ok>header on the band's line, items 12px in, nested 12px again — and one 4px gap throughout</Verdict>
             <div className={`flex ${GAP}`}>
               <NavRuler />
               <div className="flex-1 self-center text-xs text-neutral-600">
