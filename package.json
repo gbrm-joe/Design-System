@@ -1,6 +1,6 @@
 {
   "name": "@gbrm/design",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "license": "UNLICENSED",
   "description": "Design System — tokens, shared components, theme variables, rulebook, drift guard and the /design-update skill shared across the manager apps.",

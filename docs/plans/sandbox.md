@@ -136,12 +136,17 @@ simply building the pages; two were only visible once a real screen rendered.
 
 **Needing Joe's decision — NOT fixed, because they are design calls:**
 
-2. **The rulebook contradicts itself on how wide a detail panel is.** L3 and
+2. ~~**The rulebook contradicts itself on how wide a detail panel is.** L3 and
    L7 both say `w-3/4`. The "Detail panels" bullet says "full width less the
    main nav". `PanelEntry.widthClass` documents its default as `w-3/4`, and
    `EntityTable` overrides it with full-width-less-nav — which is what
    actually renders. Three statements, two of them wrong, and no way to tell
-   which from the documentation. One number, please.
+   which from the documentation. One number, please.~~ *Decided 2026-08-27
+   (Joe): full width less the main nav.* It is now the `PANEL_W` token, the
+   panel stack's default, and the only statement in L3, L7 and the catalogue.
+   `EntityTable`'s local override is gone. A panel opened straight from a page
+   — not from a table — was rendering `w-3/4` and leaving a dead strip of the
+   page down its left edge, which is how it was caught.
 3. **The two navs disagree about group headers.** `MainNavGroup.label` is
    optional — "a header above the top item is noise" — but `PanelNavGroup`
    requires it, so a record's first section has to invent a heading. L8 says

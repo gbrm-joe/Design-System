@@ -404,7 +404,7 @@ export default function AppComponents() {
       <Section
         stack
         title="The record panel — the whole shape"
-        note="A record is: a h-12 grey header band carrying the breadcrumb, then a side nav down the left, a h-9 sub-header, and the panel body. No horizontal tabs, no close/prev/next buttons. Panel width w-3/4; the backdrop stops at the main nav so the nav stays live behind an open record."
+        note="A record is: a h-12 grey header band carrying the breadcrumb, then a side nav down the left, a h-9 sub-header, and the panel body. No horizontal tabs, no close/prev/next buttons. Panel width PANEL_W — full width less the main nav; the backdrop stops at the nav so the nav stays live behind an open record."
       >
         <Anatomy
           name="PanelStackRenderer + PanelLayout (PanelNav · PanelSubHeader · PanelBody)"

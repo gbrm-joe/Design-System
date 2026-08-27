@@ -32,7 +32,8 @@ export interface PanelEntry {
   headerActions?: ReactNode;
   /** The panel body content. */
   content: ReactNode;
-  /** Optional width class override. Defaults to "w-3/4". */
+  /** Optional width class override. Defaults to `PANEL_W` — full width less
+   *  the main nav. There is no good reason to pass anything else. */
   widthClass?: string;
   /** Optional top offset (any CSS length, e.g. a var published by the parent
    *  panel). When set, this panel starts below that offset instead of at the top

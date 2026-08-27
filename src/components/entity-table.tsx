@@ -684,7 +684,8 @@ export function EntityTable<T extends { id: K }, K extends string | number = num
   function buildPanel(p: PanelConfig<T>, row: T): PanelEntry {
     return {
       id: p.id(row),
-      widthClass: p.widthClass ?? "w-full desk:w-[calc(100%-var(--sidebar-w))]",
+      // No local default — the panel stack's PANEL_W is the one number now.
+      widthClass: p.widthClass,
       title: p.title(row),
       subtitle: p.subtitle?.(row),
       titleExtra: p.titleExtra?.(row),

@@ -148,7 +148,7 @@ export default function Sandbox({ onExit }: { onExit: () => void }) {
         </main>
       </div>
 
-      {/* The panel stack renders over everything — a record opens as the w-3/4
+      {/* The panel stack renders over everything — a record opens as the PANEL_W
           Sheet with the nav still live behind it (L3). */}
       <PanelStackRenderer />
       <Toaster position="bottom-center" />
