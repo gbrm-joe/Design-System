@@ -216,7 +216,7 @@ export default function AppLayout() {
           </div>
         </Rule>
 
-        <Rule n={3} title="A record: h-12 header band · side nav left · h-9 sub-header · body" note="Records navigate DOWN a side nav. Horizontal tabs are banned — a tab strip is a different navigation model and reads as a different application. The panel is w-3/4 and the backdrop stops at the main nav, so the nav stays live behind an open record.">
+        <Rule n={3} title="A record: h-12 header band · side nav left · h-9 sub-header · body" note="Records navigate DOWN a side nav. Horizontal tabs are banned — a tab strip is a different navigation model and reads as a different application. The panel is PANEL_W — full width less the main nav — and the backdrop stops at the nav, so the nav stays live behind an open record.">
           <div className="flex h-56 overflow-hidden rounded-lg border border-neutral-300">
             <Box label="Main nav (still live)" className={`${SURFACE_NAV} w-16 shrink-0 text-neutral-500`} />
             <div className="flex min-w-0 flex-1 flex-col border-l border-neutral-300">
@@ -285,7 +285,7 @@ export default function AppLayout() {
                 {[
                   ["Main nav", "w-52 expanded, w-12 collapsed — MainNav publishes the live value as --sidebar-w, so a panel sits flush in either state"],
                   ["Panel side nav", "w-48 expanded, w-9 collapsed"],
-                  ["Detail panel", "w-3/4; the backdrop starts at left-[var(--sidebar-w)]"],
+                  ["Detail panel", "PANEL_W — full width less the nav (the whole viewport below desk:); the backdrop starts at left-[var(--sidebar-w)]"],
                   ["Form block", "~w-1/3 of the panel body, pinned left (L1)"],
                   ["FormField label cell", "w-40 default; narrow to w-28 in a tight panel, never wider"],
                   ["Table search", "w-64, alone at the right end of the toolbar"],

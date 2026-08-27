@@ -3,7 +3,14 @@
 import { useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { HEADER_H, HEADER_PAD, SURFACE_HEADER, BREADCRUMB_PARENT, BREADCRUMB_SEP } from "../design";
+import {
+  HEADER_H,
+  HEADER_PAD,
+  SURFACE_HEADER,
+  BREADCRUMB_PARENT,
+  BREADCRUMB_SEP,
+  PANEL_W,
+} from "../design";
 import { usePanelStack } from "./panel-stack-provider";
 
 // ---------------------------------------------------------------------------
@@ -14,7 +21,7 @@ import { usePanelStack } from "./panel-stack-provider";
  * Renders all panels in the stack. Place this once inside the app layout, as a
  * sibling of the main content area. Fully driven by PanelStackProvider context.
  *
- * All panels render at the same width (w-3/4) and same right-edge position.
+ * All panels render at the same width (PANEL_W) and same right-edge position.
  * Stacking is purely z-index — the topmost panel covers the one beneath.
  * Non-top panels get a dim overlay; clicking it closes the topmost (LIFO).
  */
@@ -68,7 +75,7 @@ export function PanelStackRenderer() {
 
       {stack.map((panel, index) => {
         const isTop = index === stack.length - 1;
-        const widthClass = panel.widthClass ?? "w-3/4";
+        const widthClass = panel.widthClass ?? PANEL_W;
 
         return (
           <div

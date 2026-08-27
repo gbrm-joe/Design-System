@@ -376,6 +376,19 @@ export const CHECKBOX = "h-3.5 w-3.5 cursor-pointer rounded border-neutral-300 a
 /** Detail/edit panel title (PanelHeader and the stacked-panel header). */
 export const PANEL_TITLE = "text-sm font-semibold text-neutral-900";
 
+/**
+ * How wide a detail panel is: **everything except the main nav**. DECIDED
+ * (Joe, 2026-08-27) — the rulebook said `w-3/4` in two places and "full width
+ * less the main nav" in a third, `EntityTable` overrode the default with the
+ * latter, and the panel stack shipped the former. Three statements, one
+ * number now, and it lives here so nobody has to pick.
+ *
+ * Below `desk:` the sidebar is a drawer, so the panel takes the lot. The
+ * backdrop still stops at `left-[var(--sidebar-w)]`: the nav stays live behind
+ * an open record.
+ */
+export const PANEL_W = "w-full desk:w-[calc(100%-var(--sidebar-w))]";
+
 // ── Breadcrumb ─────────────────────────────────────────────────────────────
 // ONE breadcrumb style everywhere (Joe, 2026-08-04): muted clickable parent
 // › ChevronRight › dark title. Never a slash or a back-arrow. The current

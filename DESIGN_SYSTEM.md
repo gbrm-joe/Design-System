@@ -191,8 +191,10 @@ shipped a title 4px from the sidebar. Every token in that band was correct
 Records navigate DOWN their own left column (`PanelNav`), exactly like the main
 sidebar. **Horizontal tabs in a record are banned** — a tab strip is a
 different navigation model and reads as a different application. The panel is
-`w-3/4` and its backdrop starts at `left-[var(--sidebar-w)]`, so the main nav
-stays live behind an open record.
+`PANEL_W` — **full width less the main nav** — and its backdrop starts at
+`left-[var(--sidebar-w)]`, so the main nav stays live behind an open record. A
+panel that stops short of the nav leaves a dead strip of the page showing down
+its left edge, which reads as a drawer that failed to open (Joe, 2026-08-27).
 
 **L4 — a table opens with two stacked h-9 bars.** The toolbar bar and the
 column header row are the same height and the same grey, so they read as one
@@ -211,7 +213,8 @@ and no tile wears its own accent colour.
 **L7 — the fixed widths.** Main nav `w-52` expanded / `w-12` collapsed
 (`MainNav` publishes the live value as `--sidebar-w`, so a panel sits flush in
 either state) · panel side nav `w-48` expanded / `w-9` collapsed · detail
-panel `w-3/4` · form block `~w-1/3` (L1) · FormField label cell `w-40`
+panel `PANEL_W` (full width less the nav; the whole viewport below `desk:`) ·
+form block `~w-1/3` (L1) · FormField label cell `w-40`
 default, narrowed to `w-28` in a tight panel and never wider · table search
 `w-64`, alone at the right end of the toolbar.
 
