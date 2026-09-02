@@ -4,9 +4,11 @@ import {
   createContext,
   useContext,
   useCallback,
+  useEffect,
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -80,15 +82,38 @@ export function usePanelStack(): PanelStackContextValue {
 // ---------------------------------------------------------------------------
 
 export function PanelStackProvider({ children }: { children: ReactNode }) {
-  const [stack, setStack] = useState<PanelEntry[]>([]);
+  const [stack, setStack] = useState<(PanelEntry & { path?: string })[]>([]);
+  const pathname = usePathname();
 
-  const open = useCallback((entry: PanelEntry) => {
-    setStack((prev) => {
-      // If already in stack, remove it first so it moves to the top.
-      const filtered = prev.filter((p) => p.id !== entry.id);
-      return [...filtered, entry];
-    });
-  }, []);
+  const open = useCallback(
+    (entry: PanelEntry) => {
+      setStack((prev) => {
+        // If already in stack, remove it first so it moves to the top.
+        const filtered = prev.filter((p) => p.id !== entry.id);
+        // Remember the route it was opened under — see the prune effect below.
+        return [...filtered, { ...entry, path: pathname }];
+      });
+    },
+    [pathname],
+  );
+
+  /**
+   * Navigating away closes the panels that belonged to the page you left —
+   * otherwise one persists over the new page and the nav looks dead.
+   *
+   * It used to close **every** panel, which silently killed every `?panel=…`
+   * deep link in every app: the new page's table opens the linked panel in its
+   * own mount effect, child effects run before parent ones, so the close fired
+   * a beat later and wiped it. You landed on the list instead of the record
+   * (Joe, 2026-09-02). Panels opened under the route we are on now survive.
+   */
+  useEffect(() => {
+    setStack((prev) =>
+      prev.every((p) => p.path === pathname)
+        ? prev
+        : prev.filter((p) => p.path === pathname),
+    );
+  }, [pathname]);
 
   const close = useCallback((id?: string) => {
     setStack((prev) => {

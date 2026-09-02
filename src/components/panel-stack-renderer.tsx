@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import {
   HEADER_H,
@@ -26,15 +25,12 @@ import { usePanelStack } from "./panel-stack-provider";
  * Non-top panels get a dim overlay; clicking it closes the topmost (LIFO).
  */
 export function PanelStackRenderer() {
-  const { stack, close, closeAll } = usePanelStack();
-  const pathname = usePathname();
+  const { stack, close } = usePanelStack();
 
-  // Close every panel when the route changes — otherwise an open panel persists
-  // over the new page (the layout, and so the panel stack, survives client-side
-  // navigation), leaving the main nav looking dead until a refresh.
-  useEffect(() => {
-    closeAll();
-  }, [pathname, closeAll]);
+  // Closing panels on a route change lives in the PROVIDER now, which knows
+  // which route each panel was opened under. Doing it from here closed the
+  // panel a `?panel=…` deep link had just opened on the page being navigated
+  // TO — see the note on that effect.
 
   // ── Keyboard: Escape closes the topmost panel ──
   // Sibling navigation is the header's Prev/Next buttons only. The arrow keys are
