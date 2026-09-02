@@ -30,6 +30,7 @@ frame — navigation, headers, sub-headers, toolbars — as opposed to content.
 | `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
 | `HEADER_PAD` | 16 px (`px-4`) | The ONE band inset. Content below a band is inset by the one gap (4px) and a card's text sits 12px inside that, so 16px puts the band's title on the same vertical line as the first value beneath it. Page-title band, record header, `PanelHeader` — all of them, and a record's side nav answers to it too (L8). **The nav's app-name band is the one exception at 12px**: it aligns to the nav's own column (L8's group headers), not to content it doesn't sit above |
 | `NAV_ITEM` | 13 px text, FIXED `h-6` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike. The height is fixed, not padding-derived, so a collapsed icon-only row is the same height as its expanded twin (L8); active = a step of contrast, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
+| `NAV_SCOPE` | `text-xs`, FIXED `h-10` rows — `NAV_USER`'s block | The app-wide SCOPE pickers in the nav footer — the unit picker, the area picker. A nav item takes you somewhere; these change what every screen is looking at, and built as `NAV_ITEM`s they read as two more links wedged under the list. They take the signed-in user's block exactly, so the footer is three matching controls; the label stays `text-xs`, a size DOWN from a nav item — the row grows, the text does not |
 | Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
 | Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
 
@@ -236,6 +237,17 @@ rounded pill to clear the edge; every other inset is one number on the row
 itself, never a nav pad plus a row pad added together. Groups are separated by
 their `h-9` header and the one 4px gap — never by a bigger margin.
 
+**A group header sits at the BOTTOM of its `h-9`, not centred in it.** The
+header titles the group UNDER it, so its air belongs above it, not split evenly
+either side — centred, the label floated between two lists and read as
+belonging to neither (Joe, 2026-09-02). Bottom-set it clears its first item by
+8px and the remaining ~16px does the separating overhead. The BOX is unchanged
+at `h-9`, so `NAV_GROUP_RULE` still replaces it exactly and the collapsed rail
+still lines up row for row. **The panel nav's header stays centred**, and that
+is not drift: it is a full-bleed bordered band, and text pushed to the bottom
+of a band sits on its own rule. A band centres its label; a bare label hugs its
+group.
+
 *Why it needed saying*: the panel's group header was full-bleed
 (`-mx-panelgap` cancels the nav pad so its rules reach both edges) and nobody
 added the 4px back, so it sat at 8px — left of the old rule's own number and
@@ -256,8 +268,10 @@ no row-level state to collide with.
 
 **Collapsing a nav changes its WIDTH. Nothing moves vertically.** Every row
 holds a fixed height that does not depend on what is inside it: `NAV_ITEM` is
-`h-6` whether it carries a label or a bare 12px icon, the user row is
-`NAV_USER` (`h-10`) whether it shows two lines or just an avatar, and a group
+`h-6` whether it carries a label or a bare 12px icon, a scope picker is
+`NAV_SCOPE` (`h-10`) whether it shows its label or shrinks to its icon, the user
+row is `NAV_USER` (the same `h-10`) whether it shows two lines or just an
+avatar, and a group
 label's `h-9` is taken over by `NAV_GROUP_RULE` — a divider of the same
 height — when the label becomes unreadable at 48px. Size a nav row from its
 padding and the collapsed rail comes out shorter row by row, the error

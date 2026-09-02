@@ -16,6 +16,7 @@ import {
   NAV_GROUP_LABEL,
   NAV_GROUP_RULE,
   NAV_USER,
+  NAV_SCOPE,
   NAV_ITEM_INSET,
   NAV_ITEM_INSET_NESTED,
   NAV_ACTIVE,
@@ -116,8 +117,20 @@ function MainNavSpecimen() {
         <MainNavRow label="Settings" />
         <MainNavRow label="Audit log" soon />
       </nav>
-      <div className={`shrink-0 border-t ${BRAND_BORDER} p-panelgap`}>
-        <div className={`${NAV_USER} px-2`}>
+      <div className={`flex shrink-0 flex-col gap-1 border-t ${BRAND_BORDER} p-panelgap`}>
+        {/* App-wide SCOPE, above the user block: NAV_SCOPE, a step deeper than
+            a nav item, because these change what every screen is looking at. */}
+        <div className={`${NAV_SCOPE} px-2 ${BRAND_IDLE}`}>
+          <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+          <span className="min-w-0 flex-1 truncate text-left">People</span>
+          <span className="shrink-0 opacity-60">⌃⌄</span>
+        </div>
+        <div className={`${NAV_SCOPE} px-2 ${BRAND_IDLE}`}>
+          <span className={`${NAV_ICON} rounded-sm bg-current opacity-60`} />
+          <span className="min-w-0 flex-1 truncate text-left">GBR Millson Ltd</span>
+          <span className="shrink-0 opacity-60">⌃⌄</span>
+        </div>
+        <div className={`${NAV_USER} mt-0.5 px-2`}>
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/12 text-xs font-semibold text-white">JM</div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-medium text-white/90">Joe Millson</p>

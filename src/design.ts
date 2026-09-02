@@ -88,11 +88,22 @@ export const PANEL_NAV_ITEM_INSET_NESTED = "pl-9 pr-3";
  *  BRAND_MUTED on the main nav, neutral on a panel's. h-9 matches the
  *  sub-header bar so a main-nav group label and a panel's line up. */
 const NAV_GROUP_LABEL_BASE =
-  "flex h-9 shrink-0 items-center text-xs font-semibold uppercase tracking-wide";
-export const NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} ${NAV_GROUP_INSET}`;
+  "flex h-9 shrink-0 text-xs font-semibold uppercase tracking-wide";
+/** The main nav's group header. The label sits at the BOTTOM of the h-9, not
+ *  centred in it: a header belongs to the group UNDER it, and centred it split
+ *  its air evenly above and below, so a group read as a label floating between
+ *  two lists rather than the title of the one beneath it (Joe, 2026-09-02).
+ *  Bottom-set, the header is 8px off its first item and the rest of the air
+ *  falls above, where it does the separating. The BOX is still h-9, so
+ *  NAV_GROUP_RULE still matches it and the collapsed rail still lines up row
+ *  for row. */
+export const NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} items-end pb-1 ${NAV_GROUP_INSET}`;
 /** The same header inside a panel — one step further in, so it lands under the
- *  record header's breadcrumb. See PANEL_NAV_GROUP_INSET. */
-export const PANEL_NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} ${PANEL_NAV_GROUP_INSET}`;
+ *  record header's breadcrumb. See PANEL_NAV_GROUP_INSET. It stays CENTRED,
+ *  and the difference is not drift: the panel's header is a full-bleed
+ *  bordered band, and text pushed to the bottom of a band sits on its own
+ *  rule. A band centres its label; a bare label hugs its group. */
+export const PANEL_NAV_GROUP_LABEL = `${NAV_GROUP_LABEL_BASE} items-center ${PANEL_NAV_GROUP_INSET}`;
 /** What a group header becomes when the nav is COLLAPSED: the label can't be
  *  read at 48px, so it turns into a rule — but it keeps the label's h-9, so
  *  every row below it stays exactly where it was. A short divider here is why
@@ -103,6 +114,22 @@ export const NAV_GROUP_RULE = "flex h-9 shrink-0 items-center px-2";
  *  avatar — without this the footer sits at two different heights. */
 export const NAV_USER =
   "flex h-10 w-full items-center gap-2 rounded transition-colors";
+/** An app-wide SCOPE picker in the nav footer — the unit picker, the area
+ *  picker. Not a nav item: a nav item takes you somewhere, and these change
+ *  what every screen in the app is looking at. They were built as NAV_ITEMs
+ *  and read as two more links wedged under the list (Joe, 2026-09-02).
+ *
+ *  It is NAV_USER's row exactly — h-10, the same block as the signed-in user
+ *  sitting under it. That is the point: the footer holds three controls of one
+ *  kind, "what am I looking at" twice and "who am I" once, and three matching
+ *  blocks say so where three different heights said nothing. The TEXT stays
+ *  text-xs, a size DOWN from a nav item's 13px: the row grows, the label does
+ *  not — a scope picker is a caption on a button, not a heading.
+ *
+ *  Fixed height, for NAV_USER's reason — collapsed the row holds only a 12px
+ *  icon, and a padded row would shrink and drag the whole footer up. */
+export const NAV_SCOPE =
+  "flex h-10 w-full items-center gap-2 rounded text-xs transition-colors";
 
 // The main nav wears the unit's BRAND colour (--sidebar-bg), which can be any
 // hue, so its states can't be a fixed zinc — a hard-coded bg-zinc-800 only
