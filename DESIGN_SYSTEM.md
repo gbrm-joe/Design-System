@@ -69,7 +69,7 @@ above it), never a second `neutral-200` band.
 | `BTN_ICON` / `BTN_ICON_GHOST` | Square icon buttons (nav arrows / dismiss) |
 | `PANEL_HEADER_BTN` | The ONE header square: Delete. **No close/prev/next buttons anywhere** — the table navigates between records; Escape / backdrop / breadcrumb close |
 | `FIELD` / `FIELD_SEARCH` | Editable inputs and selects — h-7, `text-xs` |
-| `FIELD_ROW` / `_LABEL` / `_VALUE` | The FormField anatomy — grey uppercase label cell + white value cell holding a **transparent** control (`fieldInput` from `ui/field-controls`); the cell IS the field boundary. Always render via the shared `FormField` |
+| `FIELD_ROW` / `_LABEL` / `_VALUE` | The FormField anatomy — grey uppercase label cell + white value cell holding a **transparent** control (`fieldInput` from `ui/field-controls`); the cell IS the field boundary. The label sits **top-left of its cell, never vertically centred** — beside a textarea a centred label floats halfway down and stops reading as the heading of its value (Joe, 2026-09-02). Always render via the shared `FormField` |
 | `SEGMENTED` (+`_BTN`/`_BTN_ACTIVE`) | The exclusive-option toggle (grain, draw order, radius). Active = a **shade darker** (`neutral-200`) — the nav-active rule; never a dark fill |
 | `CHIP` | Read-only pill on a bar (grey tint) |
 | `TAG` + `TAG_COLOR` | Tiny uppercase status tag; colour carries meaning (8 tones) |

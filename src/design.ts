@@ -255,9 +255,12 @@ export const SEGMENTED_BTN_ACTIVE =
 
 /** The row: label cell + value cell, hairline divider to the next row. */
 export const FIELD_ROW = "flex items-stretch border-b border-neutral-100 last:border-b-0";
-/** The label cell (width set per panel, w-40 default). */
+/** The label cell (width set per panel, w-40 default). The label sits TOP-left,
+ *  never vertically centred (Joe, 2026-09-02): beside a textarea or a wrapped
+ *  value the centred label floated halfway down its own cell and stopped
+ *  reading as the heading of the thing to its right. */
 export const FIELD_ROW_LABEL =
-  "flex shrink-0 items-center gap-1 border-r border-neutral-100 bg-neutral-50 px-3 py-2 text-xs font-medium uppercase tracking-wide whitespace-nowrap text-neutral-400";
+  "flex shrink-0 items-start gap-1 border-r border-neutral-100 bg-neutral-50 px-3 py-2 text-xs font-medium uppercase tracking-wide whitespace-nowrap text-neutral-400";
 /** The white value cell. */
 export const FIELD_ROW_VALUE = "flex flex-1 items-center bg-white px-2 py-1.5";
 
