@@ -9,6 +9,7 @@ import {
   PanelLayout,
   FormField,
   fieldInput,
+  fieldTextarea,
   TILE,
   SURFACE_CARD,
   CARD_HEADER,
@@ -124,6 +125,15 @@ function Overview({ project }: { project: Project }) {
           </FormField>
           <FormField label="Start date">
             <input className={fieldInput} defaultValue={shortDate(project.startDate)} />
+          </FormField>
+          {/* The tall row that proves the label rule: beside a textarea the
+              label must sit at the TOP of its cell, not halfway down it. */}
+          <FormField label="Notes">
+            <textarea
+              className={fieldTextarea}
+              rows={3}
+              defaultValue={"Access via the rear gate.\nClient prefers Friday visits."}
+            />
           </FormField>
         </div>
       </div>
