@@ -30,7 +30,7 @@ frame — navigation, headers, sub-headers, toolbars — as opposed to content.
 | `HEADER_H` | 48 px (`h-12`) | The ONE top-band height — sidebar app header, page-title band, record header. One CENTRED `leading-none` line each; labels float above, breadcrumbs inline; titles are `text-sm`; the page/record title sits level with the app name and content starts on the band's border line |
 | `HEADER_PAD` | 16 px (`px-4`) | The ONE band inset. Content below a band is inset by the one gap (4px) and a card's text sits 12px inside that, so 16px puts the band's title on the same vertical line as the first value beneath it. Page-title band, record header, `PanelHeader` — all of them, and a record's side nav answers to it too (L8). **The nav's app-name band is the one exception at 12px**: it aligns to the nav's own column (L8's group headers), not to content it doesn't sit above |
 | `NAV_ITEM` | 13 px text, FIXED `h-6` rows, `GAP` apart | The ONE nav item size — main sidebar and panel side navs alike. The height is fixed, not padding-derived, so a collapsed icon-only row is the same height as its expanded twin (L8); active = a step of contrast, never white; sub side navs collapse like the main nav (toggle pinned bottom) |
-| `NAV_SCOPE` | 13 px text, FIXED `h-7` rows | The app-wide SCOPE pickers in the nav footer — the unit picker, the area picker. One step deeper than a nav item ON PURPOSE: a nav item takes you somewhere, these change what every screen is looking at, and built as nav items they read as two more links wedged under the list |
+| `NAV_SCOPE` | `text-xs`, FIXED `h-10` rows — `NAV_USER`'s block | The app-wide SCOPE pickers in the nav footer — the unit picker, the area picker. A nav item takes you somewhere; these change what every screen is looking at, and built as `NAV_ITEM`s they read as two more links wedged under the list. They take the signed-in user's block exactly, so the footer is three matching controls; the label stays `text-xs`, a size DOWN from a nav item — the row grows, the text does not |
 | Text | `text-xs` data · `text-sm` chrome/titles · `text-lg` dialog titles | Three sizes, no exceptions; data is always `text-xs`; header titles are `text-sm` |
 | Control border | `border-neutral-300` | The SAME on every interactive control — never lighter, never borderless |
 
@@ -269,8 +269,9 @@ no row-level state to collide with.
 **Collapsing a nav changes its WIDTH. Nothing moves vertically.** Every row
 holds a fixed height that does not depend on what is inside it: `NAV_ITEM` is
 `h-6` whether it carries a label or a bare 12px icon, a scope picker is
-`NAV_SCOPE` (`h-7`) whether it shows its label or shrinks to its icon, the user
-row is `NAV_USER` (`h-10`) whether it shows two lines or just an avatar, and a group
+`NAV_SCOPE` (`h-10`) whether it shows its label or shrinks to its icon, the user
+row is `NAV_USER` (the same `h-10`) whether it shows two lines or just an
+avatar, and a group
 label's `h-9` is taken over by `NAV_GROUP_RULE` — a divider of the same
 height — when the label becomes unreadable at 48px. Size a nav row from its
 padding and the collapsed rail comes out shorter row by row, the error

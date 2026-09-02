@@ -116,14 +116,20 @@ export const NAV_USER =
   "flex h-10 w-full items-center gap-2 rounded transition-colors";
 /** An app-wide SCOPE picker in the nav footer — the unit picker, the area
  *  picker. Not a nav item: a nav item takes you somewhere, and these change
- *  what every screen in the app is looking at, so they get their own row a
- *  step deeper than NAV_ITEM's h-6. They were built as nav items and read as
- *  two more links wedged under the list (Joe, 2026-09-02).
+ *  what every screen in the app is looking at. They were built as NAV_ITEMs
+ *  and read as two more links wedged under the list (Joe, 2026-09-02).
+ *
+ *  It is NAV_USER's row exactly — h-10, the same block as the signed-in user
+ *  sitting under it. That is the point: the footer holds three controls of one
+ *  kind, "what am I looking at" twice and "who am I" once, and three matching
+ *  blocks say so where three different heights said nothing. The TEXT stays
+ *  text-xs, a size DOWN from a nav item's 13px: the row grows, the label does
+ *  not — a scope picker is a caption on a button, not a heading.
  *
  *  Fixed height, for NAV_USER's reason — collapsed the row holds only a 12px
  *  icon, and a padded row would shrink and drag the whole footer up. */
 export const NAV_SCOPE =
-  "flex h-7 w-full items-center gap-2 rounded text-[13px] leading-tight transition-colors";
+  "flex h-10 w-full items-center gap-2 rounded text-xs transition-colors";
 
 // The main nav wears the unit's BRAND colour (--sidebar-bg), which can be any
 // hue, so its states can't be a fixed zinc — a hard-coded bg-zinc-800 only
